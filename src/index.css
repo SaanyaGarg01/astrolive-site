@@ -1,0 +1,720 @@
+@import "tailwindcss";
+
+:root {
+  --bg-page: #f4f3f9;
+  --text-main: #181824;
+  --pink-primary: #ff5e7e;
+  --pink-hover: #ff3b61;
+  --purple-nav: #835cf6;
+  --purple-banner: #b09eff;
+  --blue-call-btn: #7991ff;
+  --orange-hero-btn: #ff6b35;
+}
+
+body {
+  background-color: #f4f3f9;
+  color: #181824;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Dark Glass Card System ───────────────────────────────────── */
+.glass-card {
+  background: linear-gradient(160deg, #111827 0%, #0c1020 100%);
+  border: 1px solid rgba(100, 116, 139, 0.25);
+  color: #e2e8f0;
+}
+
+.glass-card-gold {
+  background: linear-gradient(160deg, #1a1500 0%, #100d00 100%);
+  border: 1px solid rgba(245, 194, 66, 0.3);
+  color: #e2e8f0;
+}
+
+.glass-card-purple {
+  background: linear-gradient(160deg, #130d1f 0%, #0c0816 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #e2e8f0;
+}
+
+/* ── Cosmic Gradient Button ───────────────────────────────────── */
+.cosmic-gradient-btn {
+  background: linear-gradient(90deg, #f5c242 0%, #f59e0b 50%, #a855f7 100%);
+  color: #1a1a2e;
+  font-weight: 800;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+}
+
+.cosmic-gradient-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* Explicit 3-Column Grid Utility */
+.astrolive-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .astrolive-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .astrolive-grid-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* Explicit 6-Column Quick Tools Grid Utility */
+.astrolive-grid-6 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .astrolive-grid-6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .astrolive-grid-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Astrolive Brand Logo & Title */
+.astrolive-logo-text {
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  color: #1a1a2e;
+}
+
+.astrolive-pink-btn {
+  background: linear-gradient(90deg, #ff5e7e 0%, #ff3b61 100%);
+  color: #ffffff;
+  font-weight: 800;
+  border-radius: 9999px;
+  padding: 9px 24px;
+  font-size: 13px;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 94, 126, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.astrolive-pink-btn:hover {
+  background: linear-gradient(90deg, #ff3b61 0%, #e62248 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 94, 126, 0.45);
+}
+
+/* Category Nav Pill Bar matching Image 1 */
+.astrolive-pill-bar {
+  background: linear-gradient(90deg, #835cf6 0%, #936bf4 50%, #a78bfa 100%);
+  border-radius: 9999px;
+  padding: 6px 12px;
+  box-shadow: 0 6px 20px rgba(131, 92, 246, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.astrolive-pill-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.astrolive-pill-item {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.astrolive-pill-item:hover, .astrolive-pill-item.active {
+  background: #ffffff;
+  color: #7c3aed;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Hero Banner Card matching Image 1 */
+.astrolive-hero-card {
+  background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 50%, #ddd6fe 100%);
+  border-radius: 32px;
+  padding: 44px 40px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(139, 92, 246, 0.15);
+}
+
+.astrolive-hero-title {
+  font-size: 42px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.12;
+  letter-spacing: -0.5px;
+}
+
+.astrolive-hero-sub {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+/* White Hero Pill Buttons matching Image 1 */
+.astrolive-hero-white-btn {
+  background: #ffffff;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  max-width: 440px;
+  text-align: left;
+}
+
+.astrolive-hero-white-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.astrolive-btn-icon-orange {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ff521d;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255, 82, 29, 0.3);
+}
+
+.astrolive-hero-btn-text {
+  font-size: 13px;
+  font-weight: 900;
+  color: #181824;
+  letter-spacing: 0.3px;
+}
+
+.astrolive-hero-btn-highlight {
+  color: #ff521d;
+  font-weight: 900;
+}
+
+/* Quick Tools Rounded Cards matching Image 1 */
+.quick-tool-card {
+  border-radius: 20px;
+  padding: 18px;
+  height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+}
+
+.quick-tool-card .tool-title {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+/* Tool Card Backgrounds from Image 1 */
+.tool-bg-horoscope {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+}
+
+.tool-bg-panchang {
+  background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+}
+
+.tool-bg-match {
+  background: linear-gradient(135deg, #4a2b28 0%, #683834 100%);
+}
+
+.tool-bg-kundli {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+}
+
+.tool-bg-love {
+  background: linear-gradient(135deg, #92400e 0%, #d97706 100%);
+}
+
+.tool-bg-wallet {
+  background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+}
+
+/* Section Headings matching Images 2 & 3 */
+.astrolive-section-title {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+  color: #181824;
+  text-transform: uppercase;
+}
+
+/* Chat Astrologers Card (Image 2) */
+.chat-astro-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0edf9;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  min-height: 190px;
+}
+
+.chat-astro-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(131, 92, 246, 0.12);
+}
+
+.chat-astro-avatar-img,
+.astro-card-avatar-img {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+  border-radius: 9999px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+}
+
+.badge-tag-beige {
+  background: #ffedd5;
+  color: #c2410c;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.badge-price-green {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.chat-btn-purple {
+  background: linear-gradient(90deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 22px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.chat-btn-purple:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+/* Our Astrologers Card matching Image 3 */
+.astrologer-card-exact {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0edf9;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+  min-height: 250px;
+}
+
+.astrologer-card-exact:hover {
+  box-shadow: 0 14px 32px rgba(131, 92, 246, 0.12);
+  transform: translateY(-3px);
+}
+
+.tag-spec-grey {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
+.price-tag-lavender {
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.astrolive-blue-call-btn {
+  background: linear-gradient(90deg, #7991ff 0%, #6366f1 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 10px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(121, 145, 255, 0.35);
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.astrolive-blue-call-btn:hover {
+  background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(121, 145, 255, 0.45);
+}
+
+/* Live Sessions Container matching Image 4 */
+.live-sessions-container {
+  background: #ede8fa;
+  border-radius: 28px;
+  padding: 32px;
+}
+
+.live-card-vertical {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.live-card-vertical img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* App Download Banner matching Image 4 */
+.app-download-banner {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 32px;
+  padding: 44px 40px;
+  color: #ffffff;
+  box-shadow: 0 16px 36px rgba(139, 92, 246, 0.2);
+}
+
+.app-store-btn-white {
+  background: #ffffff;
+  color: #181824;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.app-store-btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Testimonial Card matching Image 5 */
+.testimonial-card-exact {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0edf9;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* Footer Container matching Image 5 */
+.astrolive-footer-exact {
+  background: #835cf6;
+  color: #ffffff;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(3deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =====================================================
+   ASTROLIVE PLUS — Subscription UI Styles
+   ===================================================== */
+
+/* ── Navbar Plus Pill ─────────────────────────────── */
+.astrolive-pill-item--plus {
+  background: linear-gradient(90deg, rgba(245, 194, 66, 0.25) 0%, rgba(245, 158, 11, 0.15) 100%);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.astrolive-pill-item--plus:hover,
+.astrolive-pill-item--plus.active {
+  background: linear-gradient(90deg, #f5c242 0%, #f59e0b 100%);
+  color: #1a1a2e;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+}
+
+.astrolive-pill-item--proof {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.15) 100%);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.astrolive-pill-item--proof:hover,
+.astrolive-pill-item--proof.active {
+  background: linear-gradient(90deg, #34d399 0%, #059669 100%);
+  color: #064e3b;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.astrolive-pill-item--patterns {
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.25) 0%, rgba(126, 34, 206, 0.15) 100%);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.astrolive-pill-item--patterns:hover,
+.astrolive-pill-item--patterns.active {
+  background: linear-gradient(90deg, #a855f7 0%, #7e22ce 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+}
+
+/* ── Plus Upsell Banner (Home) ────────────────────── */
+.plus-upsell-banner {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(168, 85, 247, 0.06) 50%, rgba(15, 18, 38, 0.9) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ── Plan Cards ───────────────────────────────────── */
+.plus-plan-card {
+  background: linear-gradient(160deg, #111827 0%, #0c1020 100%);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.plus-plan-card--free {
+  border-color: rgba(71, 85, 105, 0.3);
+}
+
+.plus-plan-card--popular {
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 40px rgba(245, 158, 11, 0.12), 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.plus-plan-card--premium {
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 8px 40px rgba(168, 85, 247, 0.12), 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.plus-plan-card:hover {
+  transform: translateY(-4px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plus-plan-card--popular:hover {
+  box-shadow: 0 16px 48px rgba(245, 158, 11, 0.2), 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.plus-plan-card--premium:hover {
+  box-shadow: 0 16px 48px rgba(168, 85, 247, 0.2), 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ── Billing Toggle ───────────────────────────────── */
+.billing-toggle-track {
+  width: 56px;
+  height: 28px;
+  border-radius: 9999px;
+  transition: background-color 0.25s ease;
+  position: relative;
+  border: none;
+  cursor: pointer;
+}
+
+.billing-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Comparison Table ─────────────────────────────── */
+.plan-comparison-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.plan-comparison-table th,
+.plan-comparison-table td {
+  padding: 12px 16px;
+  text-align: center;
+}
+
+.plan-comparison-table th:first-child,
+.plan-comparison-table td:first-child {
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .plan-comparison-table th,
+  .plan-comparison-table td {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+}
+
+/* ── Membership Status Card Glows ─────────────────── */
+.membership-card-plus {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.membership-card-premium {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+/* ── Locked Feature Card ──────────────────────────── */
+.plus-locked-overlay {
+  background: rgba(7, 9, 19, 0.75);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+}
+
+/* ── Smooth Fade In Animation ─────────────────────── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.4s ease forwards;
+}
+
