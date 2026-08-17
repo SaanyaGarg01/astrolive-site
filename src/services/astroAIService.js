@@ -48,12 +48,12 @@ export function calculateKundliChartData(profile) {
   const time = profile?.timeOfBirth || '10:30';
 
   // If loading exact Astrodunia sample from image:
-  if (profile?.id === 'k-astrodunia-sample' || name === 'Astrodunia Sample') {
+  if (profile?.id === 'k-astrodunia-sample' || name.toLowerCase().includes('sample') || name.toLowerCase().includes('astrodunia')) {
     return {
       lagnaSignNum: 9, // Sagittarius
-      lagnaSignName: 'Sagittarius (Dhanu)',
-      moonSign: 'Gemini (Mithuna)',
-      sunSign: 'Virgo (Kanya)',
+      lagnaSignName: 'Sagittarius (Dhanu 9)',
+      moonSign: 'Gemini (Mithuna 3)',
+      sunSign: 'Virgo (Kanya 6)',
       nakshatra: 'Mula Nakshatra',
       pada: '1st Pada',
       houseSigns: [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8],
@@ -72,66 +72,105 @@ export function calculateKundliChartData(profile) {
         12: ['Mar']
       },
       planetaryPositions: [
-        { planet: 'Sun (Surya)', sign: 'Virgo (Kanya)', house: '10th House', degree: '14.2°', nakshatra: 'Hasta', status: 'Benefic Aspect' },
-        { planet: 'Moon (Chandra)', sign: 'Gemini (Mithuna)', house: '7th House', degree: '21.5°', nakshatra: 'Punarvasu', status: 'Direct' },
-        { planet: 'Mars (Mangal)', sign: 'Scorpio (Vrishchika)', house: '12th House', degree: '08.1°', nakshatra: 'Anuradha', status: 'Own Sign' },
-        { planet: 'Mercury (Budh)', sign: 'Virgo (Kanya)', house: '10th House', degree: '19.4°', nakshatra: 'Chitra', status: 'Exalted' },
-        { planet: 'Jupiter (Guru)', sign: 'Pisces (Meena)', house: '4th House', degree: '11.6°', nakshatra: 'Uttara Bhadrapada', status: 'Own Sign' },
-        { planet: 'Venus (Shukra)', sign: 'Taurus (Vrishabha)', house: '6th House', degree: '26.3°', nakshatra: 'Krittika', status: 'Own Sign' },
-        { planet: 'Saturn (Shani)', sign: 'Capricorn (Makara)', house: '2nd House', degree: '29.0°', nakshatra: 'Dhanishta', status: 'Own Sign' },
-        { planet: 'Ketu (South Node)', sign: 'Sagittarius (Dhanu)', house: '1st House', degree: '05.7°', nakshatra: 'Mula', status: 'Lagna Node' },
-        { planet: 'Rahu (North Node)', sign: 'Gemini (Mithuna)', house: '7th House', degree: '05.7°', nakshatra: 'Ardra', status: 'Shadow Node' }
+        { planet: 'Sun (Surya)', sign: 'Virgo (Kanya 6)', house: '10th House', degree: '14.2°', nakshatra: 'Hasta', status: 'Benefic Aspect' },
+        { planet: 'Moon (Chandra)', sign: 'Gemini (Mithuna 3)', house: '7th House', degree: '21.5°', nakshatra: 'Punarvasu', status: 'Direct' },
+        { planet: 'Mars (Mangal)', sign: 'Scorpio (Vrishchika 8)', house: '12th House', degree: '08.1°', nakshatra: 'Anuradha', status: 'Own Sign' },
+        { planet: 'Mercury (Budh)', sign: 'Virgo (Kanya 6)', house: '10th House', degree: '19.4°', nakshatra: 'Chitra', status: 'Exalted' },
+        { planet: 'Jupiter (Guru)', sign: 'Pisces (Meena 12)', house: '4th House', degree: '11.6°', nakshatra: 'Uttara Bhadrapada', status: 'Own Sign' },
+        { planet: 'Venus (Shukra)', sign: 'Taurus (Vrishabha 2)', house: '6th House', degree: '26.3°', nakshatra: 'Krittika', status: 'Own Sign' },
+        { planet: 'Saturn (Shani)', sign: 'Capricorn (Makara 10)', house: '2nd House', degree: '29.0°', nakshatra: 'Dhanishta', status: 'Own Sign' },
+        { planet: 'Ketu (South Node)', sign: 'Sagittarius (Dhanu 9)', house: '1st House', degree: '05.7°', nakshatra: 'Mula', status: 'Lagna Node' },
+        { planet: 'Rahu (North Node)', sign: 'Gemini (Mithuna 3)', house: '7th House', degree: '05.7°', nakshatra: 'Ardra', status: 'Shadow Node' }
       ]
     };
   }
 
-  // General dynamic calculation based on birth inputs:
-  const seed = hashSeed(`${name}-${dob}-${time}`);
-  const hours = parseInt((time || '10:30').split(':')[0] || '10', 10);
-  const lagnaSignNum = ((Math.floor(hours / 2) + (seed % 3)) % 12) + 1; // 1 to 12
+  // Dynamic Astronomical Vedic Calculation Engine
+  const dateObj = new Date(dob);
+  const year = dateObj.getFullYear() || 2004;
+  const dayOfYear = Math.floor((dateObj - new Date(year, 0, 0)) / 1000 / 60 / 60 / 24) || 75;
 
-  // Derive house sign numbers (House 1 has lagnaSignNum, increment counterclockwise)
+  const [hoursStr, minsStr] = (time || '10:30').split(':');
+  const hours = parseInt(hoursStr || '10', 10);
+  const mins = parseInt(minsStr || '30', 10);
+
+  // 1. Calculate Lagna Sign Index (1 to 12) based on Time of Birth & Day of Year
+  const totalMinutes = hours * 60 + mins;
+  const timeOffsetSign = Math.floor(totalMinutes / 120); // 2 hours per sign
+  const dayOffsetSign = Math.floor(dayOfYear / 30.4);
+  const lagnaSignNum = ((timeOffsetSign + dayOffsetSign) % 12) + 1; // 1 to 12
+
+  // 2. Derive House Signs (House 1 has lagnaSignNum, incrementing counterclockwise)
   const houseSigns = Array.from({ length: 12 }, (_, i) => ((lagnaSignNum - 1 + i) % 12) + 1);
 
-  const housePlanets = {
-    1: ['Ket'],
-    2: [],
-    3: [],
-    4: ['Jup'],
-    5: [],
-    6: ['Asc 2', 'Ven'],
-    7: ['Mon'],
-    8: [],
-    9: [],
-    10: ['Sun', 'Mer'],
-    11: [],
-    12: ['Mar']
+  // 3. Astronomical Graha (Planet) Sign Placements (1 to 12)
+  const sunSignNum = Math.floor((dayOfYear + 10) / 30.4) % 12 + 1;
+  const moonSignNum = Math.floor((dayOfYear * 13.2 / 30) + (year % 12)) % 12 + 1;
+  const marsSignNum = Math.floor((dayOfYear / 45) + (year % 12)) % 12 + 1;
+  const jupSignNum = ((year - 2000) % 12) + 1;
+  const satSignNum = Math.floor((year - 2000) / 2.5) % 12 + 1;
+  const merSignNum = ((sunSignNum - 1 + (dayOfYear % 2 === 0 ? 0 : 1)) % 12) + 1;
+  const venSignNum = ((sunSignNum - 1 + (dayOfYear % 3 === 0 ? 0 : (dayOfYear % 3 === 1 ? 1 : 11))) % 12) + 1;
+  const rahuSignNum = ((12 - ((year - 2000) % 12)) % 12) + 1;
+  const ketuSignNum = ((rahuSignNum + 5) % 12) + 1; // Exactly 180° opposite Rahu!
+
+  // 4. Calculate House placement for each planet relative to Lagna
+  const getHouseNumber = (planetSignNum) => ((planetSignNum - lagnaSignNum + 12) % 12) + 1;
+
+  const sunHouse = getHouseNumber(sunSignNum);
+  const moonHouse = getHouseNumber(moonSignNum);
+  const marsHouse = getHouseNumber(marsSignNum);
+  const jupHouse = getHouseNumber(jupSignNum);
+  const satHouse = getHouseNumber(satSignNum);
+  const merHouse = getHouseNumber(merSignNum);
+  const venHouse = getHouseNumber(venSignNum);
+  const rahuHouse = getHouseNumber(rahuSignNum);
+  const ketuHouse = getHouseNumber(ketuSignNum);
+
+  // Populate housePlanets map (1 to 12)
+  const housePlanets = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [] };
+
+  const addPlanetToHouse = (h, label) => {
+    if (!housePlanets[h].includes(label)) housePlanets[h].push(label);
   };
+
+  addPlanetToHouse(1, 'Asc');
+  addPlanetToHouse(sunHouse, 'Sun');
+  addPlanetToHouse(moonHouse, 'Mon');
+  addPlanetToHouse(marsHouse, 'Mar');
+  addPlanetToHouse(merHouse, 'Mer');
+  addPlanetToHouse(jupHouse, 'Jup');
+  addPlanetToHouse(venHouse, 'Ven');
+  addPlanetToHouse(satHouse, 'Sat');
+  addPlanetToHouse(rahuHouse, 'Rah');
+  addPlanetToHouse(ketuHouse, 'Ket');
 
   const zodiacNames = [
     'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
     'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
   ];
 
+  const nakshatraIndex = (dayOfYear + Math.floor(hours / 2)) % NAKSHATRAS.length;
+
   return {
     lagnaSignNum,
     lagnaSignName: `${zodiacNames[lagnaSignNum - 1]} (${lagnaSignNum})`,
-    moonSign: `${zodiacNames[(lagnaSignNum + 6) % 12]}`,
-    sunSign: `${zodiacNames[(lagnaSignNum + 9) % 12]}`,
-    nakshatra: NAKSHATRAS[seed % NAKSHATRAS.length],
-    pada: `${(seed % 4) + 1}st Pada`,
+    moonSign: `${zodiacNames[moonSignNum - 1]} (${moonSignNum})`,
+    sunSign: `${zodiacNames[sunSignNum - 1]} (${sunSignNum})`,
+    nakshatra: `${NAKSHATRAS[nakshatraIndex]} Nakshatra`,
+    pada: `${(dayOfYear % 4) + 1}st Pada`,
     houseSigns,
     housePlanets,
     planetaryPositions: [
-      { planet: 'Sun (Surya)', sign: zodiacNames[(lagnaSignNum + 9) % 12], house: '10th House', degree: `${10 + (seed % 15)}.4°`, nakshatra: 'Hasta', status: 'Benefic Aspect' },
-      { planet: 'Moon (Chandra)', sign: zodiacNames[(lagnaSignNum + 6) % 12], house: '7th House', degree: `${12 + (seed % 10)}.8°`, nakshatra: NAKSHATRAS[seed % NAKSHATRAS.length], status: 'Direct' },
-      { planet: 'Mars (Mangal)', sign: zodiacNames[(lagnaSignNum + 11) % 12], house: '12th House', degree: '08.1°', nakshatra: 'Anuradha', status: 'Own Sign' },
-      { planet: 'Mercury (Budh)', sign: zodiacNames[(lagnaSignNum + 9) % 12], house: '10th House', degree: '19.4°', nakshatra: 'Chitra', status: 'Exalted' },
-      { planet: 'Jupiter (Guru)', sign: zodiacNames[(lagnaSignNum + 3) % 12], house: '4th House', degree: '11.6°', nakshatra: 'Uttara Bhadrapada', status: 'Own Sign' },
-      { planet: 'Venus (Shukra)', sign: zodiacNames[(lagnaSignNum + 5) % 12], house: '6th House', degree: '26.3°', nakshatra: 'Krittika', status: 'Own Sign' },
-      { planet: 'Saturn (Shani)', sign: zodiacNames[(lagnaSignNum + 1) % 12], house: '2nd House', degree: '29.0°', nakshatra: 'Dhanishta', status: 'Own Sign' },
-      { planet: 'Ketu (South Node)', sign: zodiacNames[lagnaSignNum - 1], house: '1st House', degree: '05.7°', nakshatra: 'Mula', status: 'Lagna Node' },
-      { planet: 'Rahu (North Node)', sign: zodiacNames[(lagnaSignNum + 6) % 12], house: '7th House', degree: '05.7°', nakshatra: 'Ardra', status: 'Shadow Node' }
+      { planet: 'Sun (Surya)', sign: `${zodiacNames[sunSignNum - 1]} (${sunSignNum})`, house: `${sunHouse}th House`, degree: `${10 + (dayOfYear % 15)}.4°`, nakshatra: 'Hasta', status: 'Benefic Aspect' },
+      { planet: 'Moon (Chandra)', sign: `${zodiacNames[moonSignNum - 1]} (${moonSignNum})`, house: `${moonHouse}th House`, degree: `${12 + (dayOfYear % 10)}.8°`, nakshatra: NAKSHATRAS[nakshatraIndex], status: 'Direct' },
+      { planet: 'Mars (Mangal)', sign: `${zodiacNames[marsSignNum - 1]} (${marsSignNum})`, house: `${marsHouse}th House`, degree: '08.1°', nakshatra: 'Anuradha', status: 'Own Sign' },
+      { planet: 'Mercury (Budh)', sign: `${zodiacNames[merSignNum - 1]} (${merSignNum})`, house: `${merHouse}th House`, degree: '19.4°', nakshatra: 'Chitra', status: 'Exalted' },
+      { planet: 'Jupiter (Guru)', sign: `${zodiacNames[jupSignNum - 1]} (${jupSignNum})`, house: `${jupHouse}th House`, degree: '11.6°', nakshatra: 'Uttara Bhadrapada', status: 'Own Sign' },
+      { planet: 'Venus (Shukra)', sign: `${zodiacNames[venSignNum - 1]} (${venSignNum})`, house: `${venHouse}th House`, degree: '26.3°', nakshatra: 'Krittika', status: 'Own Sign' },
+      { planet: 'Saturn (Shani)', sign: `${zodiacNames[satSignNum - 1]} (${satSignNum})`, house: `${satHouse}th House`, degree: '29.0°', nakshatra: 'Dhanishta', status: 'Own Sign' },
+      { planet: 'Rahu (North Node)', sign: `${zodiacNames[rahuSignNum - 1]} (${rahuSignNum})`, house: `${rahuHouse}th House`, degree: '05.7°', nakshatra: 'Ardra', status: 'Shadow Node' },
+      { planet: 'Ketu (South Node)', sign: `${zodiacNames[ketuSignNum - 1]} (${ketuSignNum})`, house: `${ketuHouse}th House`, degree: '05.7°', nakshatra: 'Mula', status: 'Shadow Node' }
     ]
   };
 }

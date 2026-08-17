@@ -330,7 +330,7 @@ export default function KundliAnalysis() {
               onClick={handleLoadSampleKundli}
               className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black text-xs shadow-lg flex items-center gap-1.5 transform hover:scale-105 transition-all"
             >
-              <Zap className="w-4 h-4 fill-slate-950" /> Load Image Match Chart
+              <Zap className="w-4 h-4 fill-slate-950" /> Try Sample Kundli
             </button>
 
             {/* Dropdown Menu Toggle (Requirement #29) */}
@@ -464,7 +464,7 @@ export default function KundliAnalysis() {
                   onClick={handleLoadSampleKundli}
                   className="w-full sm:w-auto purple-gradient-btn px-8 py-3.5 rounded-2xl text-sm font-black shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
                 >
-                  <Zap className="w-4 h-4" /> Explore Image Match Kundli
+                  <Zap className="w-4 h-4" /> Try Sample Kundli
                 </button>
               </div>
             </div>
@@ -742,7 +742,7 @@ export default function KundliAnalysis() {
                   onClick={handleLoadSampleKundli}
                   className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-[11px] font-black hover:bg-amber-400"
                 >
-                  ⚡ Match User Image Chart
+                  ⚡ Try Sample Kundli
                 </button>
                 <span className="text-xs text-amber-300 font-mono bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30">
                   Lagna: {chartData.lagnaSignName}
