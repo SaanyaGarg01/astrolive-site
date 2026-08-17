@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAstro } from '../context/AstroContext';
+import { calculateKundliChartData } from '../services/astroAIService';
 import {
   SAMPLE_KUNDLI_PROFILE,
   DEMO_SAVED_KUNDLIS,
-  NORTH_INDIAN_HOUSES,
   PLANETARY_POSITIONS,
   KUNDLI_PREDICTION_CATEGORIES,
   KUNDLI_TIMELINE_STAGES,
@@ -45,6 +45,103 @@ import {
   Users
 } from 'lucide-react';
 
+// TRADITIONAL NORTH INDIAN DIAMOND KUNDLI CHART COMPONENT (Matching User Image Exactly)
+function NorthIndianKundliSVG({ chartData }) {
+  const houseSigns = chartData?.houseSigns || [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8];
+  const housePlanets = chartData?.housePlanets || {
+    1: ['Ket'],
+    2: [],
+    3: [],
+    4: ['Jup'],
+    5: [],
+    6: ['Asc 2', 'Ven'],
+    7: ['Mon'],
+    8: [],
+    9: [],
+    10: ['Sun', 'Mer'],
+    11: [],
+    12: ['Mar']
+  };
+
+  // Coordinates for 12 Houses in North Indian Layout
+  const houseCoordinates = [
+    { house: 1, signX: 200, signY: 65, textX: 200, textY: 110 },   // Top Center Diamond (House 1)
+    { house: 2, signX: 105, signY: 45, textX: 95, textY: 85 },     // Top Left Triangle (House 2)
+    { house: 3, signX: 45, signY: 85, textX: 45, textY: 135 },    // Upper Left Corner (House 3)
+    { house: 4, signX: 60, signY: 200, textX: 105, textY: 205 },  // Left Center Diamond (House 4)
+    { house: 5, signX: 45, signY: 315, textX: 45, textY: 265 },   // Lower Left Corner (House 5)
+    { house: 6, signX: 105, signY: 355, textX: 95, textY: 315 },   // Bottom Left Triangle (House 6)
+    { house: 7, signX: 200, signY: 335, textX: 200, textY: 290 },  // Bottom Center Diamond (House 7)
+    { house: 8, signX: 295, signY: 355, textX: 305, textY: 315 },  // Bottom Right Triangle (House 8)
+    { house: 9, signX: 355, signY: 315, textX: 355, textY: 265 },  // Lower Right Corner (House 9)
+    { house: 10, signX: 340, signY: 200, textX: 295, textY: 205 }, // Right Center Diamond (House 10)
+    { house: 11, signX: 355, signY: 85, textX: 355, textY: 135 },  // Upper Right Corner (House 11)
+    { house: 12, signX: 295, signY: 45, textX: 305, textY: 85 }   // Top Right Triangle (House 12)
+  ];
+
+  return (
+    <div className="relative aspect-square max-w-md mx-auto bg-[#fdf8ec] border-4 border-[#5b21b6] rounded-3xl p-3 shadow-2xl overflow-hidden my-3">
+      <svg viewBox="0 0 400 400" className="w-full h-full text-slate-900 font-sans font-bold select-none">
+        {/* Outer Frame */}
+        <rect x="10" y="10" width="380" height="380" fill="#fdf8ec" stroke="#78350f" strokeWidth="6" />
+        <rect x="16" y="16" width="368" height="368" fill="none" stroke="#b45309" strokeWidth="2" />
+
+        {/* Diagonals */}
+        <line x1="10" y1="10" x2="390" y2="390" stroke="#d97706" strokeWidth="3" />
+        <line x1="390" y1="10" x2="10" y2="390" stroke="#d97706" strokeWidth="3" />
+
+        {/* Inner Diamond */}
+        <polygon points="200,10 390,200 200,390 10,200" fill="none" stroke="#d97706" strokeWidth="3" />
+
+        {/* Render 12 House Sign Numbers & Planet Placements */}
+        {houseCoordinates.map((pos, idx) => {
+          const houseNum = pos.house;
+          const signNum = houseSigns[idx] || houseNum;
+          const planets = housePlanets[houseNum] || [];
+
+          return (
+            <g key={houseNum}>
+              {/* Sign Number */}
+              <text
+                x={pos.signX}
+                y={pos.signY}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize="18"
+                fontWeight="900"
+                fill="#78350f"
+              >
+                {signNum}
+              </text>
+
+              {/* Planet Labels */}
+              {planets.length > 0 && (
+                <text
+                  x={pos.textX}
+                  y={pos.textY}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize="15"
+                  fontWeight="900"
+                  fill="#1e1b4b"
+                >
+                  {planets.join('  ')}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+
+      <div className="absolute bottom-2 left-0 right-0 text-center pointer-events-none">
+        <span className="text-[10px] font-bold text-[#78350f] bg-[#fef3c7] px-2.5 py-0.5 rounded-full border border-[#f59e0b] shadow-xs">
+          AstroDunia Traditional North Indian Janam Kundli
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function KundliAnalysis() {
   const {
     userProfile,
@@ -80,11 +177,19 @@ export default function KundliAnalysis() {
   // Loading Steps State
   const [loadStep, setLoadStep] = useState(0);
 
+  // Calculated Chart Data
+  const [chartData, setChartData] = useState(() => calculateKundliChartData(activeKundliProfile));
+
+  // Sync chart data when activeKundliProfile changes
+  useEffect(() => {
+    setChartData(calculateKundliChartData(activeKundliProfile));
+  }, [activeKundliProfile]);
+
   // AI Chat Messages State
   const [aiChatMessages, setAiChatMessages] = useState([
     {
       sender: 'ai',
-      text: `Hello ${activeKundliProfile.name}! I am AstroLive AI. Ask me anything about your Lagna (${activeKundliProfile.ascendant}), Moon sign (${activeKundliProfile.moonSign}), or planetary houses!`
+      text: `Hello ${activeKundliProfile.name}! I am AstroLive AI. Ask me anything about your Lagna (${chartData.lagnaSignName}), Moon sign (${chartData.moonSign}), or planetary houses!`
     }
   ]);
   const [aiInputText, setAiInputText] = useState('');
@@ -96,11 +201,34 @@ export default function KundliAnalysis() {
   // PDF Download Modal Simulation
   const [showPdfModal, setShowPdfModal] = useState(false);
 
-  // Fast-Track Sample Kundli (Judge Fast-Track)
+  // Fast-Track Sample Kundli (Image Match)
   const handleLoadSampleKundli = () => {
-    setActiveKundliProfile(SAMPLE_KUNDLI_PROFILE);
+    const sampleProfile = {
+      id: 'k-astrodunia-sample',
+      name: 'Astrodunia Sample',
+      dob: '2004-03-15',
+      dobFormatted: '15 March 2004',
+      timeOfBirth: '10:30 AM',
+      placeOfBirth: 'Agra, Uttar Pradesh, India',
+      gender: 'Female',
+      birthTimeAccuracy: 'Exact',
+      relation: 'AstroDunia Chart (Image Match)',
+      createdAt: '18 Aug 2026',
+      ascendant: 'Sagittarius (Dhanu 9)',
+      moonSign: 'Gemini (Mithuna 3)',
+      sunSign: 'Virgo (Kanya 6)',
+      nakshatra: 'Mula Nakshatra',
+      pada: '1st Pada',
+      tithi: 'Shukla Paksha Navami',
+      ganam: 'Deva Gana',
+      yoni: 'Ashwa (Horse)',
+      nadi: 'Madhya Nadi'
+    };
+
+    setActiveKundliProfile(sampleProfile);
+    setChartData(calculateKundliChartData(sampleProfile));
     setActiveSubView('dashboard');
-    showToast('⚡ Loaded Sample Kundli for Saanya (15 Mar 2004, Agra)!', 'success');
+    showToast('⚡ Loaded Exact AstroDunia Chart (Image Match: Sagittarius 9 Lagna, Ket H1, Jup H4, Ven H6, Mon H7, Sun/Mer H10, Mar H12)!', 'success');
   };
 
   // Form Validation & Submit Handler
@@ -145,6 +273,7 @@ export default function KundliAnalysis() {
     setTimeout(() => {
       const created = createKundliProfile(formDetails);
       setActiveKundliProfile(created);
+      setChartData(calculateKundliChartData(created));
       setActiveSubView('dashboard');
     }, 3000);
   };
@@ -160,14 +289,13 @@ export default function KundliAnalysis() {
     setAiQuestionCount((prev) => prev + 1);
 
     setTimeout(() => {
-      // Find canned response or generate dynamic AI response
       const foundQA = SAMPLE_AI_KUNDLI_QA.find((q) =>
         q.query.toLowerCase().includes(textToSend.toLowerCase().slice(0, 10))
       );
 
       const aiReply = foundQA
         ? foundQA.response
-        : `According to the astrological interpretation of your chart (${activeKundliProfile.ascendant} Lagna), this planetary placement supports steady analytical growth and long-term focus.`;
+        : `According to the astrological interpretation of your chart (${chartData.lagnaSignName} Lagna), this planetary placement supports steady analytical growth and long-term focus.`;
 
       setAiChatMessages((prev) => [...prev, { sender: 'ai', text: aiReply }]);
     }, 800);
@@ -184,7 +312,7 @@ export default function KundliAnalysis() {
                 <Sparkles className="w-3.5 h-3.5" /> ASTROLIVE COSMIC BLUEPRINT
               </span>
               <span className="text-[10px] text-slate-400 font-mono hidden sm:inline-block">
-                Traditional Interpretation Engine
+                Traditional North Indian Diamond Chart Engine
               </span>
             </div>
 
@@ -202,7 +330,7 @@ export default function KundliAnalysis() {
               onClick={handleLoadSampleKundli}
               className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 font-black text-xs shadow-lg flex items-center gap-1.5 transform hover:scale-105 transition-all"
             >
-              <Zap className="w-4 h-4 fill-slate-950" /> Try Sample Kundli
+              <Zap className="w-4 h-4 fill-slate-950" /> Load Image Match Chart
             </button>
 
             {/* Dropdown Menu Toggle (Requirement #29) */}
@@ -336,23 +464,14 @@ export default function KundliAnalysis() {
                   onClick={handleLoadSampleKundli}
                   className="w-full sm:w-auto purple-gradient-btn px-8 py-3.5 rounded-2xl text-sm font-black shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
                 >
-                  <Zap className="w-4 h-4" /> Explore Sample Kundli
+                  <Zap className="w-4 h-4" /> Explore Image Match Kundli
                 </button>
               </div>
             </div>
 
             {/* Visual North Indian Kundli Chart Graphic Overlay Representation */}
             <div className="mt-8 pt-8 border-t border-purple-500/20 max-w-lg mx-auto">
-              <div className="relative aspect-square max-w-xs mx-auto border-2 border-amber-500/50 rounded-2xl bg-slate-950/80 p-4 shadow-2xl flex items-center justify-center">
-                {/* Diamond Grid */}
-                <div className="absolute inset-4 border border-purple-500/40 rotate-45 pointer-events-none" />
-                <div className="absolute inset-4 border border-amber-400/40 pointer-events-none" />
-                <div className="text-center space-y-1 z-10">
-                  <span className="text-2xl block">🪐</span>
-                  <span className="text-xs font-bold text-amber-300 block">Vedic Janam Kundli</span>
-                  <span className="text-[10px] text-slate-400 block font-mono">12 Houses • Planets • Lagna</span>
-                </div>
-              </div>
+              <NorthIndianKundliSVG chartData={chartData} />
             </div>
           </div>
 
@@ -611,71 +730,28 @@ export default function KundliAnalysis() {
             </div>
           </div>
 
-          {/* VISUAL NORTH INDIAN STYLE KUNDLI CHART (Requirement #8) */}
+          {/* VISUAL NORTH INDIAN STYLE KUNDLI CHART (Requirement #8 — Exactly Matching User Image) */}
           <div className="glass-card rounded-3xl p-6 space-y-4 border-2 border-amber-500/40">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-xl font-black text-white">Birth Chart (Lagna Kundli)</h3>
-                <p className="text-xs text-slate-400">Traditional North Indian Diamond Kundli Layout</p>
+                <p className="text-xs text-slate-400">Traditional North Indian Diamond Kundli Layout (Image Exact Match)</p>
               </div>
-              <span className="text-xs text-amber-300 font-mono bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30">
-                Lagna: {activeKundliProfile.ascendant}
-              </span>
-            </div>
-
-            {/* Interactive Visual North Indian Diamond SVG/HTML Chart */}
-            <div className="relative aspect-square max-w-lg mx-auto bg-slate-950 border-4 border-amber-500/60 rounded-3xl p-6 shadow-2xl overflow-hidden my-4">
-              {/* Outer Diamond */}
-              <div className="absolute inset-6 border-2 border-purple-500/50 rotate-45 pointer-events-none" />
-              {/* Inner Square */}
-              <div className="absolute inset-14 border border-amber-400/40 pointer-events-none" />
-
-              {/* 12 House Nodes Visual Overlay */}
-              <div className="absolute inset-0 p-4 grid grid-cols-3 grid-rows-3 gap-2 text-[10px] font-mono">
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H12 (Leo)</span>
-                  <span className="text-slate-400">Empty</span>
-                </div>
-                <div className="p-2 border border-amber-500/40 rounded-xl bg-amber-500/10 text-white text-center">
-                  <span className="text-amber-300 font-bold block">H1 LAGNA</span>
-                  <span className="text-emerald-400 font-bold">Virgo (Asc)</span>
-                  <span className="text-[9px] text-slate-300 block">Budh (Ex)</span>
-                </div>
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H2 (Libra)</span>
-                  <span className="text-purple-300 font-bold">Shukra</span>
-                </div>
-
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H11 (Cancer)</span>
-                  <span className="text-amber-300 font-bold">Chandra</span>
-                </div>
-                <div className="p-2 border-2 border-amber-400 rounded-xl bg-slate-950 flex items-center justify-center text-center">
-                  <div>
-                    <span className="text-xl block">🪐</span>
-                    <strong className="text-xs text-amber-300 block font-bold">JANAM KUNDLI</strong>
-                    <span className="text-[9px] text-slate-400 block">{activeKundliProfile.name}</span>
-                  </div>
-                </div>
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H3 (Scorpio)</span>
-                  <span className="text-rose-400 font-bold">Mangal</span>
-                </div>
-
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H10 (Gemini)</span>
-                  <span className="text-amber-300 font-bold">Guru (Jup)</span>
-                </div>
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300 text-center">
-                  <span className="text-amber-400 font-bold block">H7 (Pisces)</span>
-                  <span className="text-amber-300 font-bold">Surya (Sun)</span>
-                </div>
-                <div className="p-2 border border-slate-800/80 rounded-xl bg-slate-900/60 text-slate-300">
-                  <span className="text-amber-400 font-bold block">H4 (Sagittarius)</span>
-                  <span className="text-purple-400 font-bold">Rahu</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleLoadSampleKundli}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 text-[11px] font-black hover:bg-amber-400"
+                >
+                  ⚡ Match User Image Chart
+                </button>
+                <span className="text-xs text-amber-300 font-mono bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30">
+                  Lagna: {chartData.lagnaSignName}
+                </span>
               </div>
             </div>
+
+            {/* TRADITIONAL NORTH INDIAN DIAMOND KUNDLI CHART */}
+            <NorthIndianKundliSVG chartData={chartData} />
           </div>
 
           {/* PLANETARY POSITIONS TABLE (Requirement #9) */}
@@ -700,7 +776,7 @@ export default function KundliAnalysis() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-900">
-                  {PLANETARY_POSITIONS.map((p, idx) => (
+                  {(chartData.planetaryPositions || PLANETARY_POSITIONS).map((p, idx) => (
                     <tr key={idx} className="hover:bg-slate-900/50 transition-colors">
                       <td className="py-2.5 px-3 font-bold text-white">{p.planet}</td>
                       <td className="py-2.5 px-3 text-amber-300">{p.sign}</td>
@@ -709,7 +785,9 @@ export default function KundliAnalysis() {
                       <td className="py-2.5 px-3 text-slate-300">{p.nakshatra}</td>
                       <td className="py-2.5 px-3 text-right">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          p.isBenefic ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                          p.status.includes('Exalted') || p.status.includes('Own') || p.status.includes('Benefic')
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                            : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                         }`}>
                           {p.status}
                         </span>
@@ -731,7 +809,7 @@ export default function KundliAnalysis() {
                   <span>Ascendant (Lagna)</span>
                   <HelpCircle className="w-3.5 h-3.5 text-slate-500" title="Your core self & physical persona" />
                 </div>
-                <strong className="text-lg font-black text-amber-300 block">{activeKundliProfile.ascendant}</strong>
+                <strong className="text-lg font-black text-amber-300 block">{chartData.lagnaSignName}</strong>
               </div>
 
               <div className="glass-card rounded-2xl p-4 space-y-1 relative">
@@ -739,7 +817,7 @@ export default function KundliAnalysis() {
                   <span>Moon Sign (Rashi)</span>
                   <HelpCircle className="w-3.5 h-3.5 text-slate-500" title="Emotional processing & mind" />
                 </div>
-                <strong className="text-lg font-black text-purple-300 block">{activeKundliProfile.moonSign}</strong>
+                <strong className="text-lg font-black text-purple-300 block">{chartData.moonSign}</strong>
               </div>
 
               <div className="glass-card rounded-2xl p-4 space-y-1 relative">
@@ -747,7 +825,7 @@ export default function KundliAnalysis() {
                   <span>Sun Sign</span>
                   <HelpCircle className="w-3.5 h-3.5 text-slate-500" title="Core soul purpose & vitality" />
                 </div>
-                <strong className="text-lg font-black text-amber-400 block">{activeKundliProfile.sunSign}</strong>
+                <strong className="text-lg font-black text-amber-400 block">{chartData.sunSign}</strong>
               </div>
 
               <div className="glass-card rounded-2xl p-4 space-y-1 relative">
@@ -755,7 +833,7 @@ export default function KundliAnalysis() {
                   <span>Nakshatra</span>
                   <HelpCircle className="w-3.5 h-3.5 text-slate-500" title="Birth stellar constellation" />
                 </div>
-                <strong className="text-lg font-black text-emerald-400 block">{activeKundliProfile.nakshatra}</strong>
+                <strong className="text-lg font-black text-emerald-400 block">{chartData.nakshatra}</strong>
               </div>
 
               <div className="glass-card rounded-2xl p-4 space-y-1 relative col-span-2 sm:col-span-1">
@@ -763,7 +841,7 @@ export default function KundliAnalysis() {
                   <span>Pada</span>
                   <HelpCircle className="w-3.5 h-3.5 text-slate-500" title="Sub-quarter of Nakshatra" />
                 </div>
-                <strong className="text-lg font-black text-white block">{activeKundliProfile.pada}</strong>
+                <strong className="text-lg font-black text-white block">{chartData.pada}</strong>
               </div>
             </div>
           </div>
@@ -776,7 +854,7 @@ export default function KundliAnalysis() {
             </div>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed italic">
-              “According to this astrological interpretation, your chart suggests a thoughtful and analytical personality with a strong focus on stability, long-term growth, and clear communication. Exalted Mercury in your 1st house imparts high retention, while Moon in Cancer fosters deep emotional intuition.”
+              “According to this astrological interpretation, your chart suggests a thoughtful and analytical personality with a strong focus on stability, long-term growth, and clear communication. With {chartData.lagnaSignName} Ascendant and Moon in {chartData.moonSign}, planetary positions foster disciplined execution and strategic foresight.”
             </p>
 
             <p className="text-[11px] text-slate-400 pt-2 border-t border-purple-500/20">
@@ -1109,9 +1187,9 @@ export default function KundliAnalysis() {
               <span className="text-xs font-bold text-amber-400 uppercase">Primary Profile</span>
               <h3 className="text-xl font-bold text-white">{activeKundliProfile.name}</h3>
               <div className="text-xs text-slate-400 space-y-1 font-mono">
-                <p>Lagna: {activeKundliProfile.ascendant}</p>
-                <p>Moon Sign: {activeKundliProfile.moonSign}</p>
-                <p>Nakshatra: {activeKundliProfile.nakshatra}</p>
+                <p>Lagna: {chartData.lagnaSignName}</p>
+                <p>Moon Sign: {chartData.moonSign}</p>
+                <p>Nakshatra: {chartData.nakshatra}</p>
               </div>
             </div>
 
@@ -1197,7 +1275,7 @@ export default function KundliAnalysis() {
               </div>
               <div className="flex justify-between text-slate-300">
                 <span>Lagna / Rashi:</span>
-                <strong className="text-purple-300">{activeKundliProfile.ascendant} / {activeKundliProfile.moonSign}</strong>
+                <strong className="text-purple-300">{chartData.lagnaSignName} / {chartData.moonSign}</strong>
               </div>
               <div className="flex justify-between text-slate-300 pt-2 border-t border-slate-800">
                 <span>Report Format:</span>
