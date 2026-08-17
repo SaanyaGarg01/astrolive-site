@@ -68,6 +68,9 @@ function AppContent() {
       case 'membership-manage':
         return <MembershipManagePage />;
       case 'muhurat':
+      case 'muhurat-marketplace':
+      case 'business-muhurat':
+      case 'vendor-dashboard':
         return <MuhuratMarketplace />;
       case 'b2b-api':
         return <B2BMuhuratAPI />;

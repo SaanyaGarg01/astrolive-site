@@ -38,7 +38,104 @@ export function AstroProvider({ children }) {
   const [consultationCredits, setConsultationCredits] = useState(
     creditsForMembership(INITIAL_USER_PROFILE.membership)
   );
-  
+
+  // Muhurat Marketplace State
+  const [muhuratSubView, setMuhuratSubView] = useState('landing');
+  const [selectedMuhuratEvent, setSelectedMuhuratEvent] = useState({
+    id: 'evt-demo-1',
+    eventType: 'wedding',
+    eventName: 'Wedding (Vivah)',
+    location: 'Delhi',
+    dateRangeFrom: '2026-11-01',
+    dateRangeTo: '2026-11-30',
+    selectedDate: '14 November 2026',
+    selectedDateISO: '2026-11-14',
+    selectedTimeWindow: '9:12 AM – 11:05 AM',
+    guestCount: '250',
+    budget: '₹5–10 Lakh',
+    specialRequirements: 'Pure veg sattvic menu & traditional Mandap setup'
+  });
+  const [myEventCart, setMyEventCart] = useState([
+    {
+      id: 'v-101',
+      name: 'Royal Palace Banquet & Gardens',
+      category: 'venues',
+      categoryLabel: 'Venue',
+      price: '₹1,80,000',
+      numericPrice: 180000,
+      image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&auto=format&fit=crop&q=80',
+      location: 'Delhi'
+    },
+    {
+      id: 'v-201',
+      name: 'Royal Feast Gourmet Caterers',
+      category: 'caterers',
+      categoryLabel: 'Catering',
+      price: '₹1,25,000',
+      numericPrice: 125000,
+      image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&auto=format&fit=crop&q=80',
+      location: 'Delhi'
+    },
+    {
+      id: 'v-301',
+      name: 'Moments Studio & Cinematic',
+      category: 'photographers',
+      categoryLabel: 'Photography',
+      price: '₹75,000',
+      numericPrice: 75000,
+      image: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=600&auto=format&fit=crop&q=80',
+      location: 'Delhi'
+    }
+  ]);
+  const [myEventBookings, setMyEventBookings] = useState([]);
+  const [selectedVendorForModal, setSelectedVendorForModal] = useState(null);
+
+  const addVendorToEvent = (vendor) => {
+    if (myEventCart.some((item) => item.id === vendor.id)) {
+      showToast(`ℹ️ ${vendor.name} is already in your Event plan!`, 'info');
+      return;
+    }
+    setMyEventCart((prev) => [...prev, vendor]);
+    showToast(`✨ Added ${vendor.name} to your Event plan!`, 'success');
+  };
+
+  const removeVendorFromEvent = (vendorId) => {
+    setMyEventCart((prev) => prev.filter((item) => item.id !== vendorId));
+    showToast('🗑️ Vendor removed from event plan.', 'info');
+  };
+
+  const confirmVendorBooking = (vendorItem) => {
+    const newBooking = {
+      bookingId: `ML-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      vendorId: vendorItem.id,
+      vendorName: vendorItem.name,
+      category: vendorItem.categoryLabel || 'Vendor',
+      eventDate: selectedMuhuratEvent.selectedDate,
+      timeSlot: selectedMuhuratEvent.selectedTimeWindow,
+      location: selectedMuhuratEvent.location,
+      amount: vendorItem.numericPrice || 150000,
+      amountFormatted: vendorItem.price,
+      status: 'Confirmed',
+      createdAt: new Date().toISOString()
+    };
+    setMyEventBookings((prev) => [newBooking, ...prev]);
+    setUserProfile((prev) => ({ ...prev, astroCoins: prev.astroCoins + 100 }));
+    showToast(`🎉 Booking confirmed for ${vendorItem.name}! +100 AstroCoins earned.`, 'success');
+    return newBooking;
+  };
+
+  const jumpToMuhuratFromConsultation = (date = '14 November 2026', eventType = 'wedding') => {
+    setSelectedMuhuratEvent((prev) => ({
+      ...prev,
+      eventType: eventType,
+      selectedDate: date,
+      selectedTimeWindow: '9:12 AM – 11:05 AM'
+    }));
+    setMuhuratSubView('vendors');
+    setActiveTab('muhurat');
+    showToast('✨ Jumping to Muhurat Marketplace with your consultation date!', 'success');
+  };
+
   // Modals & Interactivity State
   const [activeConsultation, setActiveConsultation] = useState(null); // Astrologer being called
   const [lastConsultationSummary, setLastConsultationSummary] = useState(SAMPLE_CONSULTATION_SUMMARY);
@@ -297,7 +394,21 @@ export function AstroProvider({ children }) {
         setSubscriptionBilling,
         consultationCredits,
         upgradeMembership,
-        cancelMembership
+        cancelMembership,
+        // Muhurat Marketplace
+        muhuratSubView,
+        setMuhuratSubView,
+        selectedMuhuratEvent,
+        setSelectedMuhuratEvent,
+        myEventCart,
+        setMyEventCart,
+        addVendorToEvent,
+        removeVendorFromEvent,
+        myEventBookings,
+        confirmVendorBooking,
+        selectedVendorForModal,
+        setSelectedVendorForModal,
+        jumpToMuhuratFromConsultation
       }}
     >
       {children}

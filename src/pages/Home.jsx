@@ -330,6 +330,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MUHURAT MARKETPLACE HIGHLIGHT BANNER */}
+      <section className="glass-card-gold rounded-3xl p-6 border-2 border-amber-500/40 relative overflow-hidden my-4 shadow-xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2 text-left">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-black tracking-wide uppercase">
+                🪔 NEW FEATURE RELEASE
+              </span>
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                ECOSYSTEM LIVE
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
+              Muhurat Marketplace
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium">
+              “Find the right time. Plan the perfect event.” — Discover auspicious dates for Weddings, Griha Pravesh, & Business Launches + Book verified date-matched vendors!
+            </p>
+          </div>
+
+          <button
+            onClick={() => setActiveTab('muhurat')}
+            className="shrink-0 cosmic-gradient-btn px-6 py-3.5 rounded-2xl text-xs font-black shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+          >
+            Explore Muhurat Marketplace →
+          </button>
+        </div>
+      </section>
+
       {/* ==========================================
           1.5. UNIFIED DASHBOARD CARDS
          ========================================== */}

@@ -129,6 +129,85 @@ export default function ConsultationSummaryPage() {
         </div>
       </div>
 
+      {/* CONSULTATION -> MUHURAT MARKETPLACE FLOW (Requirement #22 & #23) */}
+      <section className="glass-card-gold rounded-3xl p-6 sm:p-8 space-y-5 border-2 border-amber-500/40">
+        <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🪔</span>
+            <div>
+              <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
+                Astrology → Commerce Milestone
+              </span>
+              <h3 className="text-lg font-bold text-white">Your Recommended Muhurat is Ready</h3>
+            </div>
+          </div>
+          <span className="text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold px-3 py-1 rounded-full">
+            🟢 Calculated Post-Call
+          </span>
+        </div>
+
+        <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div>
+              <span className="text-slate-400 text-[10px] block">Event Type</span>
+              <strong className="text-white font-bold text-sm">💍 Wedding / Vivah</strong>
+            </div>
+            <div>
+              <span className="text-slate-400 text-[10px] block">Recommended Auspicious Date</span>
+              <strong className="text-amber-300 font-bold text-sm">Saturday, 14 November 2026</strong>
+            </div>
+            <div>
+              <span className="text-slate-400 text-[10px] block">Optimal Time Slot</span>
+              <strong className="text-emerald-400 font-bold text-sm">9:12 AM – 11:05 AM</strong>
+            </div>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-800">
+            <p className="text-xs text-slate-300">
+              Ready to plan your event? Discover date-matched verified vendors available on your exact Muhurat window.
+            </p>
+            <button
+              onClick={() => setActiveTab('muhurat')}
+              className="shrink-0 cosmic-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-lg hover:scale-105 transition-all"
+            >
+              Explore Vendors →
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+            Continue Planning Options:
+          </span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <button
+              onClick={() => setActiveTab('muhurat')}
+              className="p-3 bg-slate-900/90 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 rounded-xl text-center text-slate-200 hover:text-amber-300 font-bold transition-all"
+            >
+              🏛️ Find Venue
+            </button>
+            <button
+              onClick={() => setActiveTab('muhurat')}
+              className="p-3 bg-slate-900/90 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 rounded-xl text-center text-slate-200 hover:text-amber-300 font-bold transition-all"
+            >
+              🍽️ Find Caterer
+            </button>
+            <button
+              onClick={() => setActiveTab('muhurat')}
+              className="p-3 bg-slate-900/90 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 rounded-xl text-center text-slate-200 hover:text-amber-300 font-bold transition-all"
+            >
+              📸 Find Photographer
+            </button>
+            <button
+              onClick={() => setActiveTab('muhurat')}
+              className="p-3 bg-slate-900/90 hover:bg-amber-500/20 border border-slate-800 hover:border-amber-500/40 rounded-xl text-center text-slate-200 hover:text-amber-300 font-bold transition-all"
+            >
+              🧑‍⚖️ Find Priest
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Plus Consultation Discount Upsell */}
       {userProfile.membership === 'FREE' ? (
         <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-slate-900 p-5 flex flex-col sm:flex-row items-center gap-4 justify-between">

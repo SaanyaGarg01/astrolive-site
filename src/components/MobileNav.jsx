@@ -9,11 +9,10 @@ export default function MobileNav() {
 
   const mobileItems = [
     { id: 'home', label: 'Home', icon: Compass },
-    { id: 'daily-ritual', label: 'Daily', icon: Flame, badge: !hasCheckedInToday ? '•' : null },
+    { id: 'muhurat', label: 'Muhurat 📅', icon: Calendar },
     { id: 'astro-proof', label: 'Proof', icon: ShieldCheck },
     { id: 'ai-insight', label: 'Astro AI', icon: Sparkles },
-    { id: 'astrologers', label: 'Astrologers', icon: Search },
-    { id: 'patterns', label: 'Patterns', icon: Calendar }
+    { id: 'astrologers', label: 'Astrologers', icon: Search }
   ];
 
   return (
