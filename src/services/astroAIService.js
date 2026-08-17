@@ -1,22 +1,20 @@
-// Dynamic Astrological Calculation Service for AstroLive 2.0
+// Vedic Natal Chart Computation & AI Insight Engine for AstroLive 2.0
+
+const ZODIAC_SIGNS = [
+  'Aries (Mesha)', 'Taurus (Vrishabha)', 'Gemini (Mithuna)', 'Cancer (Karka)',
+  'Leo (Simha)', 'Virgo (Kanya)', 'Libra (Tula)', 'Scorpio (Vrishchika)',
+  'Sagittarius (Dhanu)', 'Capricorn (Makara)', 'Aquarius (Kumbha)', 'Pisces (Meena)'
+];
 
 const NAKSHATRAS = [
-  'Rohini Nakshatra', 'Pushya Nakshatra', 'Uttara Phalguni', 'Ashlesha', 'Swati Nakshatra',
-  'Revati Nakshatra', 'Magha Nakshatra', 'Vishakha Nakshatra', 'Anuradha', 'Purva Ashadha',
-  'Shatabhisha', 'Bharani Nakshatra', 'Krittika', 'Mrigashira', 'Chitra', 'Dhanishta'
+  'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra',
+  'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni',
+  'Hasta', 'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha',
+  'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha',
+  'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
 ];
 
-const HOUSES = [
-  '1st House (Lagna)', '2nd House (Dhana)', '5th House (Suta)', '7th House (Kalatra)',
-  '9th House (Bhagya)', '10th House (Karma)', '11th House (Labha)'
-];
-
-const PLANETS = [
-  'Sun-Jupiter Conjunction', 'Venus Exalted Phase', 'Mercury Direct Motion',
-  'Saturn Structural Aspect', 'Mars Energy Trine', 'Moon-Jupiter Gajakesari'
-];
-
-// Hash function to derive deterministic values from birth details
+// Hash helper for deterministic seed
 function hashSeed(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -26,54 +24,138 @@ function hashSeed(str) {
   return Math.abs(hash);
 }
 
+// Calculate Lagna from Time of Birth (12 signs across 24h = 2h per sign)
+function calculateLagna(timeStr) {
+  if (!timeStr) return ZODIAC_SIGNS[4]; // Default Leo
+  const parts = timeStr.split(':');
+  const hours = parseInt(parts[0] || '10', 10);
+  const index = Math.floor(hours / 2) % 12;
+  return ZODIAC_SIGNS[index];
+}
+
+// Calculate Moon Nakshatra from Date of Birth
+function calculateNakshatra(dobStr) {
+  if (!dobStr) return NAKSHATRAS[3]; // Default Rohini
+  const dateObj = new Date(dobStr);
+  const dayOfYear = Math.floor((dateObj - new Date(dateObj.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+  const index = Math.abs(dayOfYear) % NAKSHATRAS.length;
+  return NAKSHATRAS[index];
+}
+
+// Mapping of specific concerns to Vedic House, Planet, and Forecast Content
+const CONCERN_MAP = {
+  'Career Transition': {
+    house: '10th House (Karma Bhava)',
+    primaryPlanet: 'Sun & Jupiter Conjunction',
+    dasha: 'Sun Mahadasha / Jupiter Antardasha',
+    themeIcon: '💼',
+    summary: (name, lagna, nakshatra, place, date) =>
+      `Chart calculated for ${name} (Lagna: ${lagna}, Moon: ${nakshatra} in ${place}): Your 10th House of career is strongly activated by Sun-Jupiter transit. Strategic leadership moves and executive transitions carry high success probability around ${date}.`,
+    transcript: (name, lagna, nakshatra, place, date) => [
+      { timeSec: 0, text: `Analyzing 10th House Karma Bhava for ${name}, born in ${place} under ${lagna}...` },
+      { timeSec: 8, text: `Sun and Jupiter enter your 10th House of executive leadership, activating senior stakeholder support.` },
+      { timeSec: 18, text: `Under ${nakshatra} Nakshatra, your decision-making authority peaks between ${date} and 10 days post.` },
+      { timeSec: 28, text: `Favorable window identified for promotion negotiations, career transitions, and strategic pitches.` },
+      { timeSec: 38, text: `Connect with a Vedic specialist for custom Surya Arghya & career Mahadasha remedies.` }
+    ]
+  },
+  'Love & Marriage': {
+    house: '7th House (Kalatra Bhava) & 5th House (Suta)',
+    primaryPlanet: 'Venus Exalted & Moon Transit',
+    dasha: 'Venus Mahadasha / Moon Sub-Period',
+    themeIcon: '💖',
+    summary: (name, lagna, nakshatra, place, date) =>
+      `Chart calculated for ${name} (Lagna: ${lagna}, Moon: ${nakshatra} in ${place}): Venus direct movement through your 7th house brings alignment for partnership, synastry, and long-term marital decisions around ${date}.`,
+    transcript: (name, lagna, nakshatra, place, date) => [
+      { timeSec: 0, text: `Synthesizing 7th House Kalatra Bhava for ${name} (${lagna} Lagna, ${place})...` },
+      { timeSec: 7, text: `Venus moves direct through your 7th house, dissolving communication friction in relationship goals.` },
+      { timeSec: 16, text: `Moon crossing ${nakshatra} brings deep emotional transparency and shared long-term clarity.` },
+      { timeSec: 26, text: `Ideal planetary window around ${date} for engagement, co-living, and partnership commitments.` },
+      { timeSec: 35, text: `Book a certified Synastry & Kundli Matching consultation for relationship guidance.` }
+    ]
+  },
+  'Wealth & Finance': {
+    house: '2nd House (Dhana Bhava) & 11th House (Labha)',
+    primaryPlanet: 'Jupiter Aspecting Mercury',
+    dasha: 'Mercury Mahadasha / Jupiter Transit',
+    themeIcon: '💰',
+    summary: (name, lagna, nakshatra, place, date) =>
+      `Chart calculated for ${name} (Lagna: ${lagna}, Moon: ${nakshatra} in ${place}): Jupiter aspecting 2nd Dhana house and 11th Labha house signals wealth accumulation, asset liquidity, and bonus yield around ${date}.`,
+    transcript: (name, lagna, nakshatra, place, date) => [
+      { timeSec: 0, text: `Scanning 2nd Dhana Bhava & 11th Labha gains for ${name} born in ${place}...` },
+      { timeSec: 8, text: `Jupiter aspects your 2nd house of accumulated assets, supporting bonus payouts and investment yields.` },
+      { timeSec: 18, text: `Under ${nakshatra}, reallocating capital into low-volatility index assets carries long-term gains.` },
+      { timeSec: 28, text: `Avoid speculative day trading on Rahu transit days. Timing window peaks around ${date}.` },
+      { timeSec: 34, text: `Consult KP financial astrologers for precise capital allocation dates.` }
+    ]
+  },
+  'Health & Energy': {
+    house: '1st House (Lagna Vitality) & 6th House (Arogya)',
+    primaryPlanet: 'Sun-Mars Energy Alignment',
+    dasha: 'Mars Antardasha / Sun Transit',
+    themeIcon: '✨',
+    summary: (name, lagna, nakshatra, place, date) =>
+      `Chart calculated for ${name} (Lagna: ${lagna}, Moon: ${nakshatra} in ${place}): Sun entering 1st Lagna House enhances physical stamina, mental clarity, and metabolic renewal around ${date}.`,
+    transcript: (name, lagna, nakshatra, place, date) => [
+      { timeSec: 0, text: `Analyzing 1st House Lagna Vitality for ${name} (${lagna} Lagna, ${place})...` },
+      { timeSec: 8, text: `Sun and Mars enter favorable trine aspect, replenishing cellular stamina and daily focus.` },
+      { timeSec: 18, text: `Moon in ${nakshatra} calms nervous tension and supports holistic wellness routines.` },
+      { timeSec: 28, text: `Optimal period around ${date} for starting structured fitness and dietary disciplines.` },
+      { timeSec: 36, text: `Maintain your 7-day daily ritual streak for continuous energy alignment.` }
+    ]
+  }
+};
+
 export function generateAstroInsight(profile) {
   const name = profile?.name || 'Explorer';
   const dob = profile?.dob || '1998-05-14';
   const time = profile?.timeOfBirth || '10:30';
   const place = profile?.placeOfBirth || 'Delhi';
-  const concern = profile?.concern || 'Career Transition';
+  const rawConcern = profile?.concern || 'Career Transition';
 
-  const seed = hashSeed(`${name}-${dob}-${time}-${place}-${concern}`);
-  
-  const nakshatra = NAKSHATRAS[seed % NAKSHATRAS.length];
-  const house = HOUSES[(seed >> 2) % HOUSES.length];
-  const planet = PLANETS[(seed >> 4) % PLANETS.length];
-  const score = 84 + (seed % 15);
+  const lagna = calculateLagna(time);
+  const nakshatra = calculateNakshatra(dob);
+  const seed = hashSeed(`${name}-${dob}-${time}-${place}-${rawConcern}`);
 
-  const dayOffset = (seed % 20) + 1;
-  const targetDateStr = `August ${dayOffset + 10}, 2026`;
+  // Normalize concern key
+  let concernKey = 'Career Transition';
+  if (rawConcern.toLowerCase().includes('love') || rawConcern.toLowerCase().includes('marry')) {
+    concernKey = 'Love & Marriage';
+  } else if (rawConcern.toLowerCase().includes('wealth') || rawConcern.toLowerCase().includes('money')) {
+    concernKey = 'Wealth & Finance';
+  } else if (rawConcern.toLowerCase().includes('health')) {
+    concernKey = 'Health & Energy';
+  }
+
+  const concernData = CONCERN_MAP[concernKey] || CONCERN_MAP['Career Transition'];
+  const dayOffset = (seed % 15) + 10;
+  const targetDate = `August ${dayOffset}, 2026`;
+  const score = 85 + (seed % 13);
 
   return {
-    headline: `Personalized Natal Chart for ${name} (${place})`,
-    dobSummary: `DOB: ${dob} at ${time} | Lagna Nakshatra: ${nakshatra}`,
-    summary: `Your natal alignment for ${name} born in ${place} shows strong activation in your ${house} driven by ${planet}. Maximum decision momentum occurs around ${targetDateStr}.`,
+    headline: `Personalized Natal Chart for ${name}`,
+    dobSummary: `Lagna: ${lagna} | Moon Nakshatra: ${nakshatra} | DOB: ${dob} (${time}, ${place})`,
+    summary: concernData.summary(name, lagna, nakshatra, place, targetDate),
     score,
     nakshatra,
-    house,
+    house: concernData.house,
+    planet: concernData.primaryPlanet,
     cards: [
       {
-        id: 'primary',
-        title: `${concern} & Key Timing`,
-        icon: '💼',
-        subtitle: `${planet} in ${house}`,
-        insight: `For ${name}, the planetary transits calculated for ${dob} highlight favorable alignment in your ${house}. Strategic moves planned near ${targetDateStr} carry high confirmation probability.`,
-        actionableAdvice: `Capitalize on your ${nakshatra} window. Initiate conversations during early morning hours.`
+        id: 'concern-card',
+        title: `${concernKey} Focus`,
+        icon: concernData.themeIcon,
+        subtitle: `${concernData.house} • ${concernData.primaryPlanet}`,
+        insight: `Chart calculated for ${name} (${lagna} Lagna): ${concernData.summary(name, lagna, nakshatra, place, targetDate)}`,
+        actionableAdvice: `Capitalize on your ${nakshatra} transit around ${targetDate}. Initiate key steps during morning Choghadiya.`
       },
       {
-        id: 'relationship',
-        title: 'Relationships & Partnerships',
-        icon: '💖',
-        subtitle: '7th House Venus Transit Overlay',
-        insight: `Chart calculated for ${place} indicates harmonic alignment in 7th house. Communication flows smoothly when Moon crosses ${nakshatra}.`,
-        actionableAdvice: 'Share personal goals openly with your partner during the upcoming weekend.'
-      },
-      {
-        id: 'wealth',
-        title: 'Asset Growth & Finance',
-        icon: '💰',
-        subtitle: '11th House Gain Period',
-        insight: `Jupiter aspecting 11th house for your birth time (${time}) indicates strong stability and bonus eligibility.`,
-        actionableAdvice: 'Maintain disciplined savings and avoid speculative trading on Rahu transit days.'
+        id: 'secondary-card',
+        title: 'Secondary Transit Alignment',
+        icon: '🪐',
+        subtitle: `Dasha: ${concernData.dasha}`,
+        insight: `Under your ${concernData.dasha}, active planetary transits support steady progression with minimal obstacle risk.`,
+        actionableAdvice: 'Maintain daily morning focus rituals for optimal clarity.'
       }
     ],
     generatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -85,29 +167,34 @@ export function generateAstroVideo(profile) {
   const dob = profile?.dob || '1998-05-14';
   const time = profile?.timeOfBirth || '10:30';
   const place = profile?.placeOfBirth || 'Delhi';
-  const concern = profile?.concern || 'Career Transition';
+  const rawConcern = profile?.concern || 'Career Transition';
 
-  const seed = hashSeed(`video-${name}-${dob}-${time}-${place}`);
-  const nakshatra = NAKSHATRAS[seed % NAKSHATRAS.length];
-  const house = HOUSES[(seed >> 3) % HOUSES.length];
-  const planet = PLANETS[(seed >> 5) % PLANETS.length];
-  const dayOffset = (seed % 18) + 5;
+  const lagna = calculateLagna(time);
+  const nakshatra = calculateNakshatra(dob);
+  const seed = hashSeed(`vid-${name}-${dob}-${time}-${place}-${rawConcern}`);
+
+  let concernKey = 'Career Transition';
+  if (rawConcern.toLowerCase().includes('love') || rawConcern.toLowerCase().includes('marry')) {
+    concernKey = 'Love & Marriage';
+  } else if (rawConcern.toLowerCase().includes('wealth') || rawConcern.toLowerCase().includes('money')) {
+    concernKey = 'Wealth & Finance';
+  } else if (rawConcern.toLowerCase().includes('health')) {
+    concernKey = 'Health & Energy';
+  }
+
+  const concernData = CONCERN_MAP[concernKey] || CONCERN_MAP['Career Transition'];
+  const dayOffset = (seed % 15) + 10;
+  const targetDate = `August ${dayOffset}, 2026`;
 
   return {
     title: `AI Astro Insight for ${name}`,
-    topic: `${concern} (${nakshatra})`,
+    topic: `${concernKey} (${nakshatra})`,
     generatedDate: '18 August 2026',
     duration: '00:45',
     durationSec: 45,
-    planetaryContext: `${planet} in ${house}`,
-    summaryText: `Chart calculated for ${name} (Born ${dob} at ${time} in ${place}): High planetary alignment in ${house} under ${nakshatra}. Key decision window: August ${dayOffset} – ${dayOffset + 12}, 2026.`,
-    transcript: [
-      { timeSec: 0, text: `Initializing birth chart analysis for ${name}, born ${dob} at ${time} in ${place}...` },
-      { timeSec: 8, text: `Your chart reveals strong activation in the ${house} powered by ${planet}.` },
-      { timeSec: 18, text: `Under ${nakshatra}, your decision clarity peaks between August ${dayOffset} and ${dayOffset + 10}.` },
-      { timeSec: 28, text: `Favorable momentum detected for ${concern.toLowerCase()} applications and strategic steps.` },
-      { timeSec: 38, text: `Connect with a human astrologer for custom Vedic remedies tailored to your birth chart.` }
-    ]
+    planetaryContext: `${lagna} Lagna • ${concernData.house}`,
+    summaryText: concernData.summary(name, lagna, nakshatra, place, targetDate),
+    transcript: concernData.transcript(name, lagna, nakshatra, place, targetDate)
   };
 }
 
@@ -163,7 +250,7 @@ export function generateConsultationSummary(astrologer, userNotes = '') {
 
 export function calculateTimingInsight(eventName, date, time) {
   const seed = hashSeed(`${eventName}-${date}-${time}`);
-  const score = 82 + (seed % 17); // 82 - 98
+  const score = 82 + (seed % 17);
   const nakshatra = NAKSHATRAS[seed % NAKSHATRAS.length];
 
   return {
