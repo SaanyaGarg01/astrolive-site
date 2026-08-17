@@ -8,6 +8,7 @@ import {
   INITIAL_GUARD_EVENTS,
   SAMPLE_CONSULTATION_SUMMARY
 } from '../data/mockData';
+import { DEMO_SAVED_KUNDLIS, SAMPLE_KUNDLI_PROFILE } from '../data/kundliData';
 import {
   trackSubscriptionActivated,
   trackSubscriptionCancelled
@@ -134,6 +135,52 @@ export function AstroProvider({ children }) {
     setMuhuratSubView('vendors');
     setActiveTab('muhurat');
     showToast('✨ Jumping to Muhurat Marketplace with your consultation date!', 'success');
+  };
+
+  // Kundli Analysis State
+  const [savedKundlis, setSavedKundlis] = useState(DEMO_SAVED_KUNDLIS);
+  const [activeKundliProfile, setActiveKundliProfile] = useState(SAMPLE_KUNDLI_PROFILE);
+  const [kundliSubView, setKundliSubView] = useState('landing');
+
+  const createKundliProfile = (formData) => {
+    const newProfile = {
+      id: `k-${Date.now()}`,
+      name: formData.name,
+      dob: formData.dob,
+      dobFormatted: new Date(formData.dob).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+      timeOfBirth: formData.timeOfBirth,
+      placeOfBirth: formData.placeOfBirth,
+      gender: formData.gender || 'Not specified',
+      birthTimeAccuracy: formData.birthTimeAccuracy || 'Exact',
+      relation: formData.relation || (savedKundlis.length === 0 ? 'My Kundli' : 'Saved Kundli'),
+      createdAt: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+      ascendant: 'Virgo (Kanya)',
+      moonSign: 'Cancer (Karka)',
+      sunSign: 'Pisces (Meena)',
+      nakshatra: 'Pushya Nakshatra',
+      pada: '2nd Pada',
+      tithi: 'Krishna Paksha Navami',
+      ganam: 'Deva Gana',
+      yoni: 'Mesha (Ram)',
+      nadi: 'Madhya Nadi'
+    };
+
+    setSavedKundlis((prev) => [newProfile, ...prev]);
+    setActiveKundliProfile(newProfile);
+    
+    // Reward +50 AstroCoins for first Kundli creation (Requirement #31)
+    setUserProfile((prev) => ({
+      ...prev,
+      astroCoins: prev.astroCoins + 50
+    }));
+
+    showToast(`✨ Kundli generated for ${newProfile.name}! +50 AstroCoins earned 🎉`, 'success');
+    return newProfile;
+  };
+
+  const deleteKundliProfile = (id) => {
+    setSavedKundlis((prev) => prev.filter((k) => k.id !== id));
+    showToast('🗑️ Kundli profile deleted.', 'info');
   };
 
   // Modals & Interactivity State
@@ -408,7 +455,16 @@ export function AstroProvider({ children }) {
         confirmVendorBooking,
         selectedVendorForModal,
         setSelectedVendorForModal,
-        jumpToMuhuratFromConsultation
+        jumpToMuhuratFromConsultation,
+        // Kundli Analysis
+        savedKundlis,
+        setSavedKundlis,
+        activeKundliProfile,
+        setActiveKundliProfile,
+        kundliSubView,
+        setKundliSubView,
+        createKundliProfile,
+        deleteKundliProfile
       }}
     >
       {children}

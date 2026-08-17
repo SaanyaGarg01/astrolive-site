@@ -359,6 +359,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* KUNDLI ANALYSIS FEATURE HIGHLIGHT BANNER */}
+      <section className="glass-card-purple rounded-3xl p-6 border-2 border-purple-500/40 relative overflow-hidden my-4 shadow-xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2 text-left">
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[11px] font-black tracking-wide uppercase">
+                🔮 KUNDLI ANALYSIS & LIFE PREDICTIONS
+              </span>
+              <span className="text-[10px] text-amber-300 font-bold bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
+                COSMIC BLUEPRINT LIVE
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white">
+              Discover Your Cosmic Blueprint
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium">
+              Generate your personalized Kundli to explore insights about your personality, career, relationships, finances, and upcoming life phases!
+            </p>
+          </div>
+
+          <button
+            onClick={() => setActiveTab('kundli')}
+            className="shrink-0 cosmic-gradient-btn px-6 py-3.5 rounded-2xl text-xs font-black shadow-xl hover:scale-105 transition-all flex items-center gap-2"
+          >
+            Generate My Kundli →
+          </button>
+        </div>
+      </section>
+
       {/* ==========================================
           1.5. UNIFIED DASHBOARD CARDS
          ========================================== */}

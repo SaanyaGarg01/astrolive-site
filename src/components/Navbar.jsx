@@ -22,6 +22,7 @@ export default function Navbar() {
     { id: 'badges', label: '🏆 BADGES' },
     { id: 'blog', label: 'BLOG' },
     { id: 'ai-insight', label: 'FREE REPORTS' },
+    { id: 'kundli', label: '🔮 Kundli Analysis ▼', isKundli: true },
     { id: 'muhurat', label: '📅 MUHURAT MARKETPLACE', isMuhurat: true },
     { id: 'membership', label: '✨ PLUS', isPlus: true },
     { id: 'admin', label: '⚙️ ADMIN', isAdmin: true }

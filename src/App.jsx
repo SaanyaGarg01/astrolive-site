@@ -22,6 +22,7 @@ import PersonalPatterns from './pages/PersonalPatterns';
 import AstroProof from './pages/AstroProof';
 import AstroGuard from './pages/AstroGuard';
 import DailyRitual from './pages/DailyRitual';
+import KundliAnalysis from './pages/KundliAnalysis';
 import AstroCoinsShop from './pages/AstroCoinsShop';
 import ConsultationSummaryPage from './pages/ConsultationSummaryPage';
 import MembershipPage from './pages/MembershipPage';
@@ -72,6 +73,11 @@ function AppContent() {
       case 'business-muhurat':
       case 'vendor-dashboard':
         return <MuhuratMarketplace />;
+      case 'kundli':
+      case 'kundli-create':
+      case 'kundli-dashboard':
+      case 'kundli-compatibility':
+        return <KundliAnalysis />;
       case 'b2b-api':
         return <B2BMuhuratAPI />;
       case 'astrologer-portal':

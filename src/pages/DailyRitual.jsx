@@ -511,6 +511,45 @@ export default function DailyRitual() {
         </button>
       </div>
 
+      {/* ── PERSONALIZED DAILY HOROSCOPE (Requirement #19 & #20) ────────────────── */}
+      <div className="glass-card-gold rounded-3xl p-6 space-y-4 border-2 border-amber-500/40">
+        <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔮</span>
+            <div>
+              <h3 className="text-lg font-bold text-white">Your Personalized Daily Horoscope</h3>
+              <p className="text-xs text-slate-300">Connected to your saved birth profile</p>
+            </div>
+          </div>
+          <span className="text-xs font-mono text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full">
+            🟢 Active Kundli Connected
+          </span>
+        </div>
+
+        <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+          <div className="flex items-center justify-between text-slate-300">
+            <span>Profile Connected: <strong>Saanya (Virgo Ascendant, Cancer Moon)</strong></span>
+            <span className="text-amber-300 font-bold">+5 AstroCoins for reading</span>
+          </div>
+          <p className="text-slate-200 leading-relaxed italic pt-1">
+            “Today's personalized insight: Focus on completing unfinished tasks before starting something new. Mercury exalted in your 1st house gives strong analytical focus during morning hours.”
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+          <button
+            onClick={() => setActiveTab('kundli')}
+            className="w-full sm:w-auto cosmic-gradient-btn px-6 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-2"
+          >
+            <span>Read Full Kundli Insight →</span>
+          </button>
+
+          <span className="text-[11px] text-slate-400">
+            Earned +5 AstroCoins for reading today's personalized insight!
+          </span>
+        </div>
+      </div>
+
       {/* ── Recent Karma Transactions ────────────────────────── */}
       {karmaTransactions.length > 0 && (
         <div className="glass-card rounded-3xl p-6 space-y-3">

@@ -9,9 +9,9 @@ export default function MobileNav() {
 
   const mobileItems = [
     { id: 'home', label: 'Home', icon: Compass },
+    { id: 'kundli', label: 'Kundli 🔮', icon: Sparkles },
     { id: 'muhurat', label: 'Muhurat 📅', icon: Calendar },
     { id: 'astro-proof', label: 'Proof', icon: ShieldCheck },
-    { id: 'ai-insight', label: 'Astro AI', icon: Sparkles },
     { id: 'astrologers', label: 'Astrologers', icon: Search }
   ];
 
