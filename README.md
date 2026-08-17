@@ -2,8 +2,7 @@
 
 > ### **Where Celestial Guidance Meets Digital Convenience & Event Commerce.**
 > **The All-in-One Astrology, Prediction Tracking, Personal Pattern Engine & Muhurat Commerce Platform.**
-
-[![Hackathon Submission](https://img.shields.io/badge/Hackathon-AstroLive_2.0-amber?style=for-the-badge&logo=stars)](http://localhost:5173/)
+http://localhost:5173/)
 [![Tech Stack](https://img.shields.io/badge/React_19-Vite_8-purple?style=for-the-badge&logo=react)](https://react.dev)
 [![Styling](https://img.shields.io/badge/Tailwind_CSS-Cosmic_Theme-blue?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com)
 [![Status](https://img.shields.io/badge/Status-Production_Ready-emerald?style=for-the-badge)](http://localhost:5173/)
@@ -24,8 +23,6 @@ Traditional astrology platforms focus on one-off, transactional consultations (*
 6. **ASTROLIVE PLUS / PREMIUM SUBSCRIPTIONS:** Subscription tiers providing monthly consultation credits, discounts, and VIP priority.
 
 ---
-
-## 🚀 Judge Quick-Start Guide (End-to-End Walkthrough)
 
 We have pre-configured interactive fast-track entry points throughout the application for judges:
 
@@ -245,6 +242,3 @@ npm run build
 
 ---
 
-## 📄 Hackathon Submission Notes
-
-Built for the **AstroLive 2.0** product submission. All Muhurat calculations, vendor listings, availability calendars, financial analytics, and prediction guarantees are fully interactive prototype implementations designed to showcase the complete business vision and user experience.
