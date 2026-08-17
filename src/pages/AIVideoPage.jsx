@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAstro } from '../context/AstroContext';
+import { generateAstroVideo } from '../services/astroAIService';
 import {
   Play,
   Pause,
@@ -21,7 +22,11 @@ import {
   User,
   Smartphone,
   Tv,
-  Music
+  Music,
+  Calendar,
+  Clock,
+  MapPin,
+  RefreshCw
 } from 'lucide-react';
 
 const AI_AVATARS = [
@@ -51,61 +56,20 @@ const AI_AVATARS = [
   }
 ];
 
-const AI_VIDEO_TEMPLATES = [
-  {
-    id: 'career',
-    title: 'Executive Career Transition & 10th House Transit',
-    topic: 'Career Transition & Leadership Alignment',
-    duration: 45,
-    durationFormatted: '00:45',
-    planetaryContext: 'Sun-Jupiter 10th House Conjunction in Leo',
-    summaryText: 'Your natal chart indicates a major 30-day decision window where career transitions and executive applications carry maximum positive planetary momentum.',
-    transcript: [
-      { timeSec: 0, text: 'Initializing natal chart alignment for Sun, Jupiter, and 10th House transits...' },
-      { timeSec: 8, text: 'Your 10th House of profession is experiencing a powerful Sun-Jupiter alignment this month.' },
-      { timeSec: 18, text: 'Senior stakeholders and executive recruiters are unusually receptive to your strategic initiative.' },
-      { timeSec: 28, text: 'Optimal timing window identified between August 18 and September 5 for key salary negotiations.' },
-      { timeSec: 38, text: 'Connect with a human astrologer for custom mantras and personalized dasha remedies.' }
-    ]
-  },
-  {
-    id: 'love',
-    title: 'Venus 7th House Harmony & Relationship Sync',
-    topic: 'Love & Relationship Alignment',
-    duration: 42,
-    durationFormatted: '00:42',
-    planetaryContext: 'Venus 7th House Direct Phase',
-    summaryText: 'Venus transit through your 7th house brings clarity to long-term relationship commitment and co-living goals.',
-    transcript: [
-      { timeSec: 0, text: 'Synthesizing Venus direct transit through your 7th house of partnerships...' },
-      { timeSec: 7, text: 'Emotional hesitancy clears as Mercury turns direct in your communication sector.' },
-      { timeSec: 16, text: 'Deep alignment conversations with your partner are heavily favored this week.' },
-      { timeSec: 26, text: 'Rohini Nakshatra brings peaceful energy for shared long-term milestone planning.' },
-      { timeSec: 35, text: 'Book a Synastry session with our certified specialists for compatibility deep-dives.' }
-    ]
-  },
-  {
-    id: 'wealth',
-    title: 'Jupiter 2nd House Asset Acceleration',
-    topic: 'Wealth & Financial Growth',
-    duration: 40,
-    durationFormatted: '00:40',
-    planetaryContext: 'Jupiter Aspecting 2nd House of Wealth',
-    summaryText: 'Jupiter aspects your 2nd house of wealth, signaling strong investment yield and bonus payout alignment.',
-    transcript: [
-      { timeSec: 0, text: 'Scanning financial transits for Jupiter aspecting 2nd house of accumulated assets...' },
-      { timeSec: 8, text: 'Unexpected financial inflows or pending bonuses are supported by planetary aspects.' },
-      { timeSec: 18, text: 'Reallocate capital into long-term index assets during this high-clarity window.' },
-      { timeSec: 28, text: 'Avoid speculative day trades on Rahu transit days.' },
-      { timeSec: 34, text: 'Consult KP financial specialists for precise investment date selection.' }
-    ]
-  }
-];
-
 export default function AIVideoPage() {
   const { userProfile, astrologers, setActiveTab, startConsultation, showToast } = useAstro();
 
-  const [selectedTemplate, setSelectedTemplate] = useState(AI_VIDEO_TEMPLATES[0]);
+  // Dynamic User Input Form for Unique Readings
+  const [birthForm, setBirthForm] = useState({
+    name: userProfile?.name || 'Saanya Garg',
+    dob: '1998-05-14',
+    timeOfBirth: '10:30',
+    placeOfBirth: 'Delhi',
+    concern: 'Career Transition'
+  });
+
+  // Calculate dynamic AI video data based on custom inputs
+  const [videoData, setVideoData] = useState(() => generateAstroVideo(birthForm));
   const [selectedAvatar, setSelectedAvatar] = useState(AI_AVATARS[0]);
   const [aspectRatio, setAspectRatio] = useState('widescreen');
   
@@ -113,12 +77,29 @@ export default function AIVideoPage() {
   const [isMuted, setIsMuted] = useState(false);
   const [useVoiceover, setUseVoiceover] = useState(true);
   const [currentTimeSec, setCurrentTimeSec] = useState(0);
-  const [currentCaption, setCurrentCaption] = useState(selectedTemplate.transcript[0].text);
+  const [currentCaption, setCurrentCaption] = useState(videoData.transcript[0].text);
   const [isGeneratingNew, setIsGeneratingNew] = useState(false);
 
   const canvasRef = useRef(null);
   const audioCtxRef = useRef(null);
   const oscRef = useRef(null);
+
+  // Recalculate dynamic video data when birth form updates
+  const handleRecalculateChart = () => {
+    setIsGeneratingNew(true);
+    showToast(`🤖 Calculating unique natal chart for ${birthForm.name} (${birthForm.dob} ${birthForm.timeOfBirth})...`, 'info');
+    
+    setTimeout(() => {
+      const newVideo = generateAstroVideo(birthForm);
+      setVideoData(newVideo);
+      setIsGeneratingNew(false);
+      setCurrentTimeSec(0);
+      setCurrentCaption(newVideo.transcript[0].text);
+      setIsPlaying(true);
+      speakText(newVideo.transcript[0].text);
+      showToast(`✨ Unique Chart Rendered! Planetary Context: ${newVideo.planetaryContext}`, 'success');
+    }, 1500);
+  };
 
   // Web Audio Synthesizer for Guaranteed Sound
   const playCosmicSound = () => {
@@ -138,17 +119,17 @@ export default function AIVideoPage() {
       const gain = audioCtxRef.current.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(220, audioCtxRef.current.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, audioCtxRef.current.currentTime + 2);
+      osc.frequency.setValueAtTime(240, audioCtxRef.current.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(480, audioCtxRef.current.currentTime + 2);
 
       gain.gain.setValueAtTime(0.15, audioCtxRef.current.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtxRef.current.currentTime + 3);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtxRef.current.currentTime + 2.5);
 
       osc.connect(gain);
       gain.connect(audioCtxRef.current.destination);
 
       osc.start();
-      osc.stop(audioCtxRef.current.currentTime + 3);
+      osc.stop(audioCtxRef.current.currentTime + 2.5);
       oscRef.current = osc;
     } catch (e) {
       console.warn('Audio Context init:', e);
@@ -162,7 +143,7 @@ export default function AIVideoPage() {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
-      utterance.pitch = 1.1;
+      utterance.pitch = 1.05;
       
       const voices = window.speechSynthesis.getVoices();
       const englishVoice = voices.find(v => v.lang.includes('en'));
@@ -195,16 +176,16 @@ export default function AIVideoPage() {
       interval = setInterval(() => {
         setCurrentTimeSec((prev) => {
           const nextTime = prev + 0.2;
-          if (nextTime >= selectedTemplate.duration) {
+          if (nextTime >= videoData.durationSec) {
             setIsPlaying(false);
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             return 0;
           }
 
           // Check for caption updates
-          const activeLine = selectedTemplate.transcript.reduce((p, c) => {
+          const activeLine = videoData.transcript.reduce((p, c) => {
             return nextTime >= c.timeSec ? c : p;
-          }, selectedTemplate.transcript[0]);
+          }, videoData.transcript[0]);
 
           if (activeLine && activeLine.text !== currentCaption) {
             setCurrentCaption(activeLine.text);
@@ -217,16 +198,15 @@ export default function AIVideoPage() {
     }
 
     return () => clearInterval(interval);
-  }, [isPlaying, selectedTemplate, currentCaption, useVoiceover, isMuted]);
+  }, [isPlaying, videoData, currentCaption, useVoiceover, isMuted]);
 
-  // Procedural 60FPS Dynamic Motion Canvas (Space Motion, Stars, Orbiting Planets & Talking Mouth Animation)
+  // Procedural 60FPS Dynamic Motion Canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    // Stars data
     const stars = Array.from({ length: 120 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -240,7 +220,6 @@ export default function AIVideoPage() {
     const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 1. Moving Starfield Warp
       ctx.fillStyle = '#050714';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -255,7 +234,6 @@ export default function AIVideoPage() {
         ctx.fill();
       });
 
-      // 2. Glowing Cosmic Nebula Center
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
@@ -266,12 +244,10 @@ export default function AIVideoPage() {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 3. Rotating Kundli Zodiac Wheels
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.rotate((angle * Math.PI) / 180);
 
-      // Outer Ring
       ctx.beginPath();
       ctx.arc(0, 0, 110, 0, 2 * Math.PI);
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.6)';
@@ -279,7 +255,6 @@ export default function AIVideoPage() {
       ctx.setLineDash([10, 6]);
       ctx.stroke();
 
-      // Kundli Inner Square
       ctx.beginPath();
       ctx.rect(-70, -70, 140, 140);
       ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
@@ -287,7 +262,6 @@ export default function AIVideoPage() {
       ctx.setLineDash([]);
       ctx.stroke();
 
-      // Kundli Diagonals
       ctx.beginPath();
       ctx.moveTo(-70, -70);
       ctx.lineTo(70, 70);
@@ -296,7 +270,6 @@ export default function AIVideoPage() {
       ctx.strokeStyle = 'rgba(236, 72, 153, 0.4)';
       ctx.stroke();
 
-      // Orbiting Planets
       const planets = [
         { name: '☉ Sun', a: 0, r: 110, color: '#f59e0b' },
         { name: '♃ Jup', a: 72, r: 110, color: '#a855f7' },
@@ -322,7 +295,6 @@ export default function AIVideoPage() {
 
       ctx.restore();
 
-      // 4. Live Audio Spectrum Bars (When playing)
       if (isPlaying) {
         ctx.save();
         const bars = 40;
@@ -347,21 +319,6 @@ export default function AIVideoPage() {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPlaying]);
 
-  const handleGenerateNewAI = () => {
-    setIsGeneratingNew(true);
-    showToast('🤖 Synthesizing 1080p AI Natal Chart & Voice Stream...', 'info');
-    setTimeout(() => {
-      setIsGeneratingNew(false);
-      const nextTmpl = AI_VIDEO_TEMPLATES[Math.floor(Math.random() * AI_VIDEO_TEMPLATES.length)];
-      setSelectedTemplate(nextTmpl);
-      setCurrentTimeSec(0);
-      setCurrentCaption(nextTmpl.transcript[0].text);
-      setIsPlaying(true);
-      speakText(nextTmpl.transcript[0].text);
-      showToast('✨ AI Astro Video Rendered & Playing!', 'success');
-    }, 1800);
-  };
-
   const matchedAstrologers = astrologers.slice(0, 2);
 
   const formatTime = (seconds) => {
@@ -376,10 +333,10 @@ export default function AIVideoPage() {
       <div className="text-center space-y-2 max-w-3xl mx-auto">
         <div className="flex items-center justify-center gap-2">
           <span className="px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-black tracking-wide uppercase flex items-center gap-1.5 shadow-md">
-            <Cpu className="w-3.5 h-3.5 text-amber-400" /> AI ASTRO VIDEO ENGINE 2.0
+            <Cpu className="w-3.5 h-3.5 text-amber-400" /> ASTROLIVE DYNAMIC CHART ENGINE
           </span>
           <span className="text-[10px] bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full font-bold">
-            🟢 AUDIO & MOTION STREAM LIVE
+            🟢 UNIQUE PER PERSON / DATE / TIME
           </span>
         </div>
 
@@ -387,13 +344,92 @@ export default function AIVideoPage() {
           Personalized AI Astro Video
         </h1>
         <p className="text-xs sm:text-sm text-slate-300">
-          Generated for <strong className="text-amber-300">{userProfile.name}</strong> • Transit: <strong className="text-emerald-400">{selectedTemplate.planetaryContext}</strong>
+          Generated for <strong className="text-amber-300">{birthForm.name}</strong> ({birthForm.placeOfBirth}) • Transit: <strong className="text-emerald-400">{videoData.planetaryContext}</strong>
         </p>
+      </div>
+
+      {/* DYNAMIC BIRTH DETAILS INPUT FORM (Ensures 100% Unique Readings for Every Person/Date/Time) */}
+      <div className="glass-card-gold rounded-3xl p-5 border border-amber-500/30 space-y-3">
+        <div className="flex items-center justify-between border-b border-amber-500/20 pb-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-bold text-white">Enter Birth Details for Custom AI Video Calculation</h3>
+          </div>
+          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/20 px-2 py-0.5 rounded-full">
+            Dynamic Calculation Mode
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Full Name</label>
+            <input
+              type="text"
+              value={birthForm.name}
+              onChange={(e) => setBirthForm((prev) => ({ ...prev, name: e.target.value }))}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Date of Birth</label>
+            <input
+              type="date"
+              value={birthForm.dob}
+              onChange={(e) => setBirthForm((prev) => ({ ...prev, dob: e.target.value }))}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Time of Birth</label>
+            <input
+              type="time"
+              value={birthForm.timeOfBirth}
+              onChange={(e) => setBirthForm((prev) => ({ ...prev, timeOfBirth: e.target.value }))}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Place of Birth</label>
+            <input
+              type="text"
+              value={birthForm.placeOfBirth}
+              onChange={(e) => setBirthForm((prev) => ({ ...prev, placeOfBirth: e.target.value }))}
+              placeholder="e.g. Delhi"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-bold mb-1">Focus Topic</label>
+            <select
+              value={birthForm.concern}
+              onChange={(e) => setBirthForm((prev) => ({ ...prev, concern: e.target.value }))}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            >
+              <option value="Career Transition">Career Transition</option>
+              <option value="Love & Marriage">Love & Marriage</option>
+              <option value="Wealth & Finance">Wealth & Finance</option>
+              <option value="Health & Energy">Health & Energy</option>
+            </select>
+          </div>
+        </div>
+
+        <button
+          onClick={handleRecalculateChart}
+          disabled={isGeneratingNew}
+          className="w-full cosmic-gradient-btn py-2.5 rounded-xl text-xs font-black shadow-lg flex items-center justify-center gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${isGeneratingNew ? 'animate-spin' : ''}`} />
+          <span>{isGeneratingNew ? 'Calculating Dynamic Chart...' : `Calculate Unique Chart for ${birthForm.name}`}</span>
+        </button>
       </div>
 
       {/* Control Bar & Avatar Picker */}
       <div className="bg-[#0f111a] border border-amber-500/30 rounded-3xl p-4 sm:p-5 shadow-2xl space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           
           {/* Avatar Picker */}
           <div className="space-y-1.5">
@@ -421,34 +457,7 @@ export default function AIVideoPage() {
             </div>
           </div>
 
-          {/* Topic Picker */}
-          <div className="space-y-1.5">
-            <label className="block text-slate-300 font-bold flex items-center gap-1">
-              <Video className="w-3.5 h-3.5 text-purple-400" /> Select Forecast Topic:
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {AI_VIDEO_TEMPLATES.map((tmpl) => (
-                <button
-                  key={tmpl.id}
-                  onClick={() => {
-                    setSelectedTemplate(tmpl);
-                    setIsPlaying(false);
-                    setCurrentTimeSec(0);
-                    setCurrentCaption(tmpl.transcript[0].text);
-                  }}
-                  className={`px-3 py-2 rounded-xl border text-[11px] font-bold transition-all ${
-                    selectedTemplate.id === tmpl.id
-                      ? 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-md'
-                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {tmpl.id.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Format & Re-Generate */}
+          {/* Format Selection */}
           <div className="space-y-1.5 flex flex-col justify-between">
             <label className="block text-slate-300 font-bold flex items-center gap-1">
               <Sliders className="w-3.5 h-3.5 text-emerald-400" /> Video Format:
@@ -456,21 +465,12 @@ export default function AIVideoPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setAspectRatio(aspectRatio === 'widescreen' ? 'portrait' : 'widescreen')}
-                className="flex-1 py-1.5 px-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-[11px] font-bold flex items-center justify-center gap-1"
+                className="flex-1 py-2 px-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-[11px] font-bold flex items-center justify-center gap-1"
               >
                 {aspectRatio === 'widescreen' ? <Tv className="w-3.5 h-3.5 text-amber-300" /> : <Smartphone className="w-3.5 h-3.5 text-purple-300" />}
                 <span>{aspectRatio === 'widescreen' ? '16:9 Widescreen' : '9:16 Mobile Reel'}</span>
               </button>
             </div>
-
-            <button
-              onClick={handleGenerateNewAI}
-              disabled={isGeneratingNew}
-              className="w-full py-2.5 rounded-xl cosmic-gradient-btn text-xs font-black shadow-lg flex items-center justify-center gap-1.5"
-            >
-              <Sparkles className={`w-3.5 h-3.5 ${isGeneratingNew ? 'animate-spin' : ''}`} />
-              <span>{isGeneratingNew ? 'Rendering AI Video...' : 'Re-Generate AI Video'}</span>
-            </button>
           </div>
         </div>
       </div>
@@ -491,12 +491,11 @@ export default function AIVideoPage() {
             className="w-full h-full object-cover"
           />
 
-          {/* AI PRESENTING AVATAR TALKING HEAD (PICTURE-IN-PICTURE WITH MOUTH ANIMATION) */}
+          {/* AI PRESENTING AVATAR TALKING HEAD */}
           <div className="absolute bottom-16 right-4 z-20 flex items-center gap-3 bg-slate-950/90 backdrop-blur-md p-2.5 rounded-2xl border-2 border-amber-500/60 shadow-2xl">
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 border-amber-400">
               <img src={selectedAvatar.avatarImg} alt={selectedAvatar.name} className="w-full h-full object-cover" />
               
-              {/* Animated Speaking Ring & Sound Indicator */}
               {isPlaying && (
                 <div className="absolute inset-0 bg-amber-500/20 border-2 border-amber-400 rounded-xl animate-ping opacity-75 pointer-events-none" />
               )}
@@ -524,7 +523,7 @@ export default function AIVideoPage() {
           </div>
 
           <div className="absolute top-4 right-4 bg-slate-950/85 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] font-mono text-purple-300 border border-purple-500/40 shadow-lg z-20">
-            {formatTime(currentTimeSec)} / {selectedTemplate.durationFormatted}
+            {formatTime(currentTimeSec)} / {videoData.duration}
           </div>
 
           {/* Big Centered Play/Pause Button */}
@@ -564,7 +563,7 @@ export default function AIVideoPage() {
             <input
               type="range"
               min={0}
-              max={selectedTemplate.duration}
+              max={videoData.durationSec}
               step={0.1}
               value={currentTimeSec}
               onChange={(e) => {
@@ -601,10 +600,10 @@ export default function AIVideoPage() {
           <div className="md:col-span-2 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 space-y-2">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <h4 className="font-bold text-white text-sm">AI Transit Summary Overview</h4>
-              <span className="text-amber-300 font-mono text-[11px]">{selectedTemplate.planetaryContext}</span>
+              <span className="text-amber-300 font-mono text-[11px]">{videoData.planetaryContext}</span>
             </div>
             <p className="text-slate-300 leading-relaxed italic">
-              "{selectedTemplate.summaryText}"
+              "{videoData.summaryText}"
             </p>
           </div>
 
@@ -630,7 +629,7 @@ export default function AIVideoPage() {
                   setCurrentTimeSec(0);
                   setIsPlaying(true);
                   playCosmicSound();
-                  speakText(selectedTemplate.transcript[0].text);
+                  speakText(videoData.transcript[0].text);
                 }}
                 className="py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-1"
               >
