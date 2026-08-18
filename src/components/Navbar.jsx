@@ -295,8 +295,17 @@ export default function Navbar() {
     setKpMenuOpen(false);
   };
 
+  const handleCompatibilityClick = (subView) => {
+    if (setCompatibilitySubView) setCompatibilitySubView(subView);
+    setActiveTab('compatibility');
+    setCompatibilityMenuOpen(false);
+  };
 
-
+  const handleCalculatorClick = (subView) => {
+    if (setCalculatorSubView) setCalculatorSubView(subView);
+    setActiveTab('calculators');
+    setCalculatorMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-[#f4f3f9]/95 backdrop-blur-md border-b border-purple-100/60 pb-3">
@@ -373,7 +382,7 @@ export default function Navbar() {
                   <button
                     ref={horoscopeBtnRef}
                     onClick={() => {
-                      if (setHoroscopeTimeframe && !horoscopeTimeframe) setHoroscopeTimeframe('daily');
+                      if (setHoroscopeTimeframe && !horoscopeTimeframe) setHoroscopeTimeframe('today');
                       setActiveTab('horoscope');
                       handleOpenHoroscopeMenu();
                     }}
@@ -398,7 +407,7 @@ export default function Navbar() {
                   <button
                     ref={occultBtnRef}
                     onClick={() => {
-                      if (setOccultSubView && !occultSubView) setOccultSubView('numerology');
+                      if (setOccultSubView && !occultSubView) setOccultSubView('palmistry');
                       setActiveTab('occult');
                       handleOpenOccultMenu();
                     }}
@@ -423,7 +432,7 @@ export default function Navbar() {
                   <button
                     ref={healingBtnRef}
                     onClick={() => {
-                      if (setHealingSubView && !healingSubView) setHealingSubView('reiki');
+                      if (setHealingSubView && !healingSubView) setHealingSubView('feng-shui');
                       setActiveTab('healing');
                       handleOpenHealingMenu();
                     }}
@@ -472,7 +481,11 @@ export default function Navbar() {
                 >
                   <button
                     ref={lalKitabBtnRef}
-                    onClick={() => handleLalKitabClick('lal-kitab-home')}
+                    onClick={() => {
+                      if (setLalKitabSubView && !lalKitabSubView) setLalKitabSubView('lal-kitab-home');
+                      setActiveTab('lal-kitab');
+                      handleOpenLalKitabMenu();
+                    }}
                     className={`astrolive-pill-item ${
                       activeTab === 'lal-kitab' ? 'active' : ''
                     }`}
