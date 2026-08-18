@@ -15,13 +15,22 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import AIInsightPage from './pages/AIInsightPage';
+import BlogPage from './pages/BlogPage';
 import AIVideoPage from './pages/AIVideoPage';
 import AstrologerMatching from './pages/AstrologerMatching';
 import AstroJourney from './pages/AstroJourney';
 import PersonalPatterns from './pages/PersonalPatterns';
 import AstroProof from './pages/AstroProof';
+import OccultPage from './pages/OccultPage';
 import AstroGuard from './pages/AstroGuard';
+import HealingPage from './pages/HealingPage';
+import PanchangPage from './pages/PanchangPage';
+import LalKitabPage from './pages/LalKitabPage';
+import KpSystemPage from './pages/KpSystemPage';
+import CompatibilityPage from './pages/CompatibilityPage';
+import CalculatorsPage from './pages/CalculatorsPage';
 import DailyRitual from './pages/DailyRitual';
+import HoroscopePage from './pages/HoroscopePage';
 import KundliAnalysis from './pages/KundliAnalysis';
 import AstroCoinsShop from './pages/AstroCoinsShop';
 import ConsultationSummaryPage from './pages/ConsultationSummaryPage';
@@ -43,41 +52,94 @@ function AppContent() {
         return <Home />;
       case 'onboarding':
         return <Onboarding />;
+      case 'store':
+      case 'coins':
+        return <AstroCoinsShop />;
+      case 'horoscope':
+        return <HoroscopePage />;
+      case 'daily-ritual':
+        return <DailyRitual />;
+      case 'astrologers':
+        return <AstrologerMatching />;
+      case 'blog':
+        return <BlogPage />;
       case 'ai-insight':
+      case 'free-reports':
         return <AIInsightPage />;
       case 'ai-video':
         return <AIVideoPage />;
-      case 'astrologers':
-        return <AstrologerMatching />;
+      case 'occult':
+      case 'palmistry':
+      case 'tarot':
+      case 'psychic':
+      case 'vastu':
+      case 'chinese-astrology':
+        return <OccultPage />;
+      case 'astro-proof':
+        return <AstroProof />;
+      case 'healing':
+      case 'feng-shui':
+      case 'reiki':
+      case 'meditation':
+      case 'yoga':
+      case 'crystal-therapy':
+        return <HealingPage />;
+      case 'astro-guard':
+        return <AstroGuard />;
       case 'journey':
         return <AstroJourney />;
       case 'patterns':
       case 'personal-patterns':
         return <PersonalPatterns />;
-      case 'astro-proof':
-        return <AstroProof />;
-      case 'astro-guard':
-        return <AstroGuard />;
-      case 'daily-ritual':
-        return <DailyRitual />;
-      case 'coins':
-        return <AstroCoinsShop />;
+      case 'panchang':
+      case 'todays-panchang':
+      case 'indian-calendar':
+      case 'hora-calculator':
+      case 'choghadiya':
+        return <PanchangPage />;
+      case 'muhurat':
+      case 'muhurat-marketplace':
+      case 'business-muhurat':
+      case 'vendor-dashboard':
+        return <MuhuratMarketplace />;
+      case 'lal-kitab':
+      case 'lal-kitab-home':
+      case 'what-is-lal-kitab':
+      case 'houses':
+      case 'planets':
+        return <LalKitabPage />;
+      case 'kp':
+      case 'what-is-kp-system':
+      case 'kp-horary':
+      case 'cuspal-sub-lord':
+      case 'planetary-significators':
+        return <KpSystemPage />;
+      case 'compatibility':
+      case 'zodiac-compatibility':
+      case 'kundli-milan':
+      case 'love-calculator':
+      case 'numerology-compatibility':
+        return <CompatibilityPage />;
+      case 'calculators':
+      case 'love-calculator-tool':
+      case 'friendship-calculator':
+      case 'moon-sign-calculator':
+      case 'sun-sign-calculator':
+      case 'ascendant-calculator':
+      case 'sade-sati-calculator':
+      case 'gemstone-calculator':
+        return <CalculatorsPage />;
+      case 'kundli':
+      case 'kundli-create':
+      case 'kundli-dashboard':
+      case 'kundli-compatibility':
+        return <KundliAnalysis />;
       case 'summary':
         return <ConsultationSummaryPage />;
       case 'membership':
         return <MembershipPage />;
       case 'membership-manage':
         return <MembershipManagePage />;
-      case 'muhurat':
-      case 'muhurat-marketplace':
-      case 'business-muhurat':
-      case 'vendor-dashboard':
-        return <MuhuratMarketplace />;
-      case 'kundli':
-      case 'kundli-create':
-      case 'kundli-dashboard':
-      case 'kundli-compatibility':
-        return <KundliAnalysis />;
       case 'b2b-api':
         return <B2BMuhuratAPI />;
       case 'astrologer-portal':

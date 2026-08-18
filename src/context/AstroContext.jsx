@@ -26,6 +26,14 @@ function creditsForMembership(membership) {
 export function AstroProvider({ children }) {
   const [userProfile, setUserProfile] = useState(INITIAL_USER_PROFILE);
   const [activeTab, setActiveTab] = useState('home');
+  const [horoscopeTimeframe, setHoroscopeTimeframe] = useState('yesterday');
+  const [occultSubView, setOccultSubView] = useState('palmistry');
+  const [healingSubView, setHealingSubView] = useState('feng-shui');
+  const [panchangSubView, setPanchangSubView] = useState('todays-panchang');
+  const [lalKitabSubView, setLalKitabSubView] = useState('lal-kitab-home');
+  const [kpSubView, setKpSubView] = useState('what-is-kp-system');
+  const [compatibilitySubView, setCompatibilitySubView] = useState('zodiac-compatibility');
+  const [calculatorSubView, setCalculatorSubView] = useState('love-calculator-tool');
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [astrologers, setAstrologers] = useState(MOCK_ASTROLOGERS);
   const [predictions, setPredictions] = useState(INITIAL_PREDICTIONS);
@@ -404,6 +412,22 @@ export function AstroProvider({ children }) {
         updateProfile,
         activeTab,
         setActiveTab,
+        horoscopeTimeframe,
+        setHoroscopeTimeframe,
+        occultSubView,
+        setOccultSubView,
+        healingSubView,
+        setHealingSubView,
+        panchangSubView,
+        setPanchangSubView,
+        lalKitabSubView,
+        setLalKitabSubView,
+        kpSubView,
+        setKpSubView,
+        compatibilitySubView,
+        setCompatibilitySubView,
+        calculatorSubView,
+        setCalculatorSubView,
         isDemoMode,
         enableDemoMode,
         astrologers,
